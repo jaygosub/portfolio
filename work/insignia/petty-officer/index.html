@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbit</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap');
+
+    :root {
+      --cream: #f5f0e8;
+      --dark: #0a0a0f;
+      --accent: #c8a96e;
+      --muted: rgba(245, 240, 232, 0.55);
+      --panel-max: 1000px;
+      --panel-pad: 3rem;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--dark);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Video stage ── */
+    #video-stage {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh; z-index: 0;
+    }
+
+    #bg-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    #video-stage::after {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at center, transparent 40%, rgba(10,10,15,0.5) 100%),
+        linear-gradient(to bottom, rgba(10,10,15,0.3) 0%, transparent 15%, transparent 80%, rgba(10,10,15,0.7) 100%);
+      pointer-events: none;
+    }
+
+    /* ── Progress bar ── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--accent), #e8d5a3);
+      z-index: 100; transition: width 0.05s linear;
+    }
+
+    /* ── HUD ── */
+    #hud { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
+
+    #hud-bar {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; align-items: center;
+      gap: 2.5rem;
+      padding: 2rem 3rem;
+      background: rgba(10,10,15,0);
+      backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+      border-bottom: 1px solid rgba(200,169,110,0);
+      transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+      pointer-events: all;
+    }
+
+    .caption-top { margin-left: auto; }
+
+    #hud-bar.scrolled {
+      background: rgba(10,10,15,0.6);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom-color: rgba(200,169,110,0.1);
+    }
+
+    .hud-nav {
+      display: flex; align-items: center;
+      gap: 0.75rem; pointer-events: all;
+    }
+
+    .hud-nav a {
+      display: flex; align-items: center;
+      gap: 0.5rem;
+      font-size: 0.58rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+      padding: 0.3rem 0;
+    }
+
+    .hud-nav a:hover { color: var(--accent); }
+
+    .hud-nav a svg {
+      width: 12px; height: 12px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .hud-nav-sep {
+      width: 1px; height: 12px;
+      background: rgba(200,169,110,0.2);
+    }
+
+    .hud-nav-index {
+      font-size: 0.55rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(200,169,110,0.4);
+      text-decoration: none; transition: color 0.2s;
+      pointer-events: all;
+    }
+
+    .hud-nav-index:hover { color: var(--accent); }
+
+    .wordmark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      letter-spacing: 0.18em; color: var(--cream); opacity: 0.9;
+    }
+
+    .caption-top {
+      font-size: 0.68rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    #progress-pct {
+      position: absolute; bottom: 2.8rem; right: 3rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 0.18em;
+      color: var(--accent); opacity: 0.85;
+    }
+
+    #scroll-cue {
+      position: absolute; bottom: 2.8rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      transition: opacity 0.4s ease;
+    }
+
+    #scroll-cue span {
+      font-size: 0.62rem; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    .scroll-arrow {
+      width: 18px; height: 18px;
+      border-right: 1.5px solid var(--accent);
+      border-bottom: 1.5px solid var(--accent);
+      transform: rotate(45deg);
+      animation: bounce 1.6s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translate(0,0); opacity: 1; }
+      50%       { transform: rotate(45deg) translate(4px,4px); opacity: 0.5; }
+    }
+
+    /* ── Layout ── */
+    #scroll-content { position: relative; z-index: 10; }
+
+    #hero {
+      height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+    }
+
+    /*#hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      line-height: 0.9; letter-spacing: 0.04em; color: var(--cream);
+      position: relative;
+    }
+
+    #hero h1::before {
+      content: attr(data-text);
+      position: absolute; inset: 0;
+      color: rgba(0,0,0,.75);
+      filter: blur(10px) brightness(0);
+      opacity: 1;
+      transform: translateY(6px) scaleY(0.98);
+      z-index: -1; pointer-events: none;
+    }*/
+
+        #hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 12rem);
+      line-height: 0.9; letter-spacing: 0.04em; color: var(--cream);
+      position: relative;
+    }
+
+    #hero h1::before {
+      display: none;
+    }
+
+  #hero h1 {
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,1));
+    }
+
+    #hero p {
+      margin-top: 1.2rem;
+      font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent);
+      background: rgba(10,10,15,0.5);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      padding: 0.45rem 1.2rem; border-radius: 1px;
+    }
+
+    .content-section { padding: 7rem 0; }
+
+    .section-inner { max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .text-block {
+      background: rgba(10,10,15,0.55);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(200,169,110,0.12);
+      border-radius: 2px; padding: 3.5rem 4rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem; line-height: 0.65; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem;
+    }
+
+    .section-inner h2, .timeline-header h2, .gallery-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 0.92; letter-spacing: 0.04em;
+      color: var(--cream); margin-bottom: 2.5rem;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3rem; margin-top: 3rem; }
+
+    /* Stacked intro layout — full-width title + body, no side-by-side split */
+    .intro-stacked { display: flex; flex-direction: column; gap: 1.5rem; }
+    .intro-stacked h2 { margin-bottom: 0; }
+
+    .content-section p, .timeline-content p {
+      font-size: 1rem; line-height: 1.45; color: var(--muted); font-weight: 300;
+    }
+
+    .card { border-top: 1px solid rgba(200,169,110,0.25); padding-top: 2rem; }
+
+    .card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 0.08em;
+      color: var(--cream); margin-bottom: 1rem;
+    }
+
+    /* ── Stats ── */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 2rem; margin-top: 3rem;
+      border-top: 1px solid rgba(200,169,110,0.12); padding-top: 3rem;
+    }
+
+    .stat { display: flex; flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+
+    .stat-icon { width: 48px; height: 48px; margin-bottom: 0.25rem; }
+
+    .stat-icon svg { width: 100%; height: 100%; overflow: visible; }
+
+    .stat-icon svg path, .stat-icon svg circle, .stat-icon svg line, .stat-icon svg polyline {
+      fill: none; stroke: var(--accent); stroke-width: 1.5;
+      stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: var(--dash-len, 200);
+      stroke-dashoffset: var(--dash-len, 200);
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat.fired .stat-icon svg path,
+    .stat.fired .stat-icon svg circle,
+    .stat.fired .stat-icon svg line,
+    .stat.fired .stat-icon svg polyline { stroke-dashoffset: 0; }
+
+    .stat h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--accent); letter-spacing: 0.04em; line-height: 1;
+      opacity: 0; transition: opacity 0.4s ease 0.5s;
+    }
+
+    .stat.fired h4 { opacity: 1; }
+
+    .stat p {
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted); margin-top: 0.1rem;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.4s ease 0.7s, transform 0.4s ease 0.7s;
+    }
+
+    .stat.fired p { opacity: 1; transform: translateY(0); }
+
+    /* ── Text + Image ── */
+    .text-image-right, .text-image-left {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+
+    .text-image-right .ti-text h2,
+    .text-image-left .ti-text h2 { margin-bottom: 1.5rem; }
+
+    .text-image-right .ti-image img,
+    .text-image-left .ti-image img {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover; border-radius: 2px; display: block;
+    }
+
+    .text-image-left .ti-image { order: -1; }
+
+    /* ── Fullbleed ── */
+    .section-fullbleed { padding: 7rem 0; }
+
+    .fullbleed-wrap { position: relative; max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .fullbleed-wrap img {
+      width: 100%; max-height: 85vh;
+      object-fit: cover; display: block; border-radius: 2px;
+    }
+
+    .fullbleed-caption {
+      position: absolute; bottom: 1rem; right: calc(var(--panel-pad) + 0.75rem);
+      font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,240,232,0.5);
+      background: rgba(10,10,15,0.5); backdrop-filter: blur(6px);
+      padding: 0.4rem 0.8rem; border-radius: 1px;
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote { padding: 0.5rem 0; max-width: 900px; margin: 0 auto; }
+
+    .pull-quote blockquote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.05; letter-spacing: 0.03em; color: var(--cream);
+      border-left: 2px solid var(--accent); padding-left: 2.5rem;
+    }
+
+    .pull-quote cite {
+      display: block; margin-top: 1.5rem; padding-left: 2.5rem;
+      font-size: 0.68rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--accent); font-style: normal;
+    }
+
+    /* ── Gallery ── */
+    .gallery-section { padding: 7rem 0; }
+
+    .gallery-inner { max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .gallery-header { margin-bottom: 2.5rem; }
+
+    .gallery-label {
+      font-size: 0.65rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+    }
+
+    .gallery-grid { columns: 3; column-gap: 0; }
+
+    .gallery-item {
+      break-inside: avoid; margin-bottom: 0;
+      position: relative; overflow: hidden; cursor: pointer;
+    }
+
+    .gallery-item img { width: 100%; display: block; transition: transform 0.5s ease; }
+    .gallery-item:hover img { transform: scale(1.03); }
+
+    .gallery-item::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(10,10,15,0); transition: background 0.3s ease;
+    }
+
+    .gallery-item:hover::after { background: rgba(10,10,15,0.6); }
+
+    /* Centred click indicator — accent cross */
+    .gallery-item::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      width: 25px; height: 25px;
+      background:
+        linear-gradient(var(--accent), var(--accent)) center/5px 100% no-repeat,
+        linear-gradient(var(--accent), var(--accent)) center/100% 5px no-repeat;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .gallery-item:hover::before {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* ── Lightbox ── */
+    #lightbox {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(10,10,15,0.95); backdrop-filter: blur(16px);
+      display: none; align-items: center; justify-content: center;
+    }
+
+    #lightbox.open { display: flex; }
+
+    #lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 2px; }
+
+    #lightbox-close {
+      position: absolute; top: 2rem; right: 2.5rem;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); transition: color 0.2s; padding: 0.5rem;
+    }
+
+    #lightbox-close svg {
+      width: 22px; height: 22px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round;
+    }
+
+    #lightbox-close:hover { color: var(--cream); }
+
+    #lightbox-prev, #lightbox-next {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); transition: color 0.2s; padding: 1rem;
+    }
+
+    #lightbox-prev svg, #lightbox-next svg {
+      width: 28px; height: 28px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    #lightbox-prev { left: 1.5rem; }
+    #lightbox-next { right: 1.5rem; }
+    #lightbox-prev:hover, #lightbox-next:hover { color: var(--accent); }
+
+    #lightbox-dots {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 0.5rem; align-items: center;
+    }
+
+    .lb-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(245,240,232,0.3);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .lb-dot.active {
+      background: var(--accent);
+      transform: scale(1.4);
+    }
+
+    /* ── Timeline ── */
+    .timeline-section { padding: 7rem 0; }
+
+    .timeline-inner { max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .timeline-header { margin-bottom: 4rem; }
+
+    /* Steps: clean stacked layout — no roundels, no spine */
+    .timeline-steps { display: flex; flex-direction: column; gap: 3.5rem; }
+
+    .timeline-step { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .timeline-step-label {
+      font-size: 0.62rem; letter-spacing: 0.32em;
+      text-transform: uppercase; color: var(--accent);
+      display: none; /* numbers removed per design */
+    }
+
+    .timeline-content { /* kept for reveal observer compat */ }
+
+    .timeline-content h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      letter-spacing: 0.06em; color: var(--cream);
+      line-height: 1; margin-bottom: 0.25rem;
+    }
+
+    .timeline-content p {
+      font-size: 1rem; line-height: 1.45; color: var(--muted); font-weight: 300;
+    }
+
+    .timeline-content .step-image { margin-top: 1rem; width: 100%; }
+    .timeline-content .step-image img { width: 100%; border-radius: 2px; display: block; }
+
+    /* ── Footer ── */
+    footer {
+      background: rgba(10,10,15,0.75);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(200,169,110,0.12);
+      padding: 5rem 3rem; text-align: center;
+      position: relative; z-index: 10;
+    }
+
+    footer .footer-wordmark {
+      display: block; font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem; letter-spacing: 0.18em;
+      color: var(--cream); opacity: 0.15; margin-bottom: 1rem;
+    }
+
+    footer p {
+      font-size: 0.68rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── Loading ── */
+    #loading {
+      position: fixed; inset: 0; background: var(--dark);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.5rem; z-index: 200; transition: opacity 0.6s ease;
+    }
+
+    #loading.hidden { opacity: 0; pointer-events: none; }
+
+    .loading-ring {
+      width: 48px; height: 48px;
+      border: 1.5px solid rgba(200,169,110,0.2);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading span {
+      font-size: 0.65rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── Annotated / Badge diagram section ── */
+    .annotated-section { padding: 7rem 0; }
+
+    .annotated-inner { max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .annotated-block {
+      background: rgba(10,10,15,0.52);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(200,169,110,0.1);
+      border-radius: 2px;
+      padding: 3.5rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-ghost {
+      position: absolute; right: -4%; top: 50%;
+      transform: translateY(-50%); width: 52%;
+      opacity: 0.05; mix-blend-mode: screen;
+      pointer-events: none; user-select: none;
+    }
+
+    .badge-ghost img { width: 100%; height: auto; display: block; }
+
+    .annotated-label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 3rem;
+    }
+
+    .annotated-diagram { display: flex; align-items: flex-start; gap: 3rem; }
+
+    .badge-svg-wrap { position: relative; flex: 0 0 42%; max-width: 320px; }
+
+    .badge-svg-wrap svg.badge-svg {
+      width: 100%; height: auto; display: block;
+      filter: drop-shadow(0 0 50px rgba(200,169,110,0.08));
+    }
+
+    .callout-list {
+      flex: 1; display: flex; flex-direction: column;
+      gap: 1.8rem; padding-right: 4rem; min-width: 0;
+    }
+
+    .callout-float {
+      opacity: 0; transform: translateX(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .callout-float.visible { opacity: 1; transform: translateX(0); }
+
+    .callout-float-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .65rem; letter-spacing: 0.35em;
+      color: rgb(200,169,110); line-height: 1.1;
+      margin-bottom: 0.3rem; text-transform: uppercase;
+    }
+
+    .callout-float-desc { font-size: 0.9rem; line-height: 1.4; color: rgba(245,240,232,0.45); }
+
+    .badge-svg .draw-stroke {
+      fill: none; stroke: #f5f0e8;
+      stroke-dasharray: var(--dl, 2000);
+      stroke-dashoffset: var(--dl, 2000);
+      transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: var(--dd, 0s);
+    }
+
+    .badge-svg .draw-fill {
+      opacity: 0; transition: opacity 0.7s ease;
+      transition-delay: var(--dd, 0s);
+    }
+
+    .badge-svg.drawn .draw-stroke { stroke-dashoffset: 0; }
+    .badge-svg.drawn .draw-fill   { opacity: 1; }
+
+    .badge-svg g[data-highlight-group] {
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    /* ── Panel sections ── */
+    .panel-section { padding: 7rem 0; position: relative; z-index: 10; }
+
+    .panel-inner { max-width: var(--panel-max); margin: 0 auto; padding: 0 var(--panel-pad); }
+
+    .panel-label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent);
+      display: block; margin-bottom: 1.2rem;
+    }
+
+    .panel-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      line-height: 0.92; letter-spacing: 0.04em; color: var(--cream);
+    }
+
+    .panel-body { font-size: 1rem; line-height: 1.85; color: var(--muted); font-weight: 300; }
+
+    .panel-rule {
+      border: none; border-top: 1px solid rgba(245,240,232,0.12); margin: 4rem 0;
+    }
+
+    /* Panel A — Royal Navy */
+    .rn-panel .panel-heading { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 2rem; }
+    .rn-panel .panel-body    { max-width: 68ch; margin-bottom: 4rem; }
+
+    .rn-badge-primary  { display: flex; justify-content: center; padding: 0 60px; }
+    .rn-badge-primary img  { width: 100%; max-width: 520px; height: auto; display: block; }
+
+    .rn-symmetry-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; letter-spacing: 0.1em;
+      color: var(--cream); text-align: center;
+      display: block; margin-bottom: 1rem;
+    }
+
+    .rn-symmetry-caption {
+      font-size: 0.85rem; font-weight: 300;
+      color: var(--muted); text-align: center;
+      display: block; margin-bottom: 3rem;
+    }
+
+    .rn-badge-secondary { display: flex; justify-content: center; padding: 0 120px; }
+    .rn-badge-secondary img { width: 100%; max-width: 360px; height: auto; display: block; }
+
+    /* Panel B — SBS */
+    .sbs-panel .panel-heading { font-size: clamp(3rem, 7vw, 6rem); margin-bottom: 3rem; }
+
+    .sbs-image-wrap { width: 100%; margin-bottom: 2.5rem; }
+    .sbs-image-wrap img { width: 100%; height: auto; display: block; }
+
+    .sbs-captions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+
+    .sbs-caption-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.6rem; padding: 0 1rem;
+    }
+
+    .sbs-caption-col__label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent); text-align: center;
+    }
+
+    .sbs-caption-col__text {
+      font-size: 0.9rem; font-weight: 300;
+      color: var(--muted); text-align: center; line-height: 1.55;
+    }
+
+    /* Panel C — HQCOMFOR */
+    .hq-intro {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: start; margin-bottom: 5rem;
+    }
+
+    .hq-intro-text { display: flex; flex-direction: column; }
+    .hq-intro-text .panel-heading { font-size: clamp(2.5rem, 5vw, 5rem); margin-bottom: 1.5rem; }
+
+    .hq-intro-badge { display: flex; justify-content: center; }
+    .hq-intro-badge img { width: 100%; max-width: 320px; height: auto; display: block; }
+
+    .hq-section-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; letter-spacing: 0.1em;
+      color: var(--cream); text-align: center; margin-bottom: 3rem;
+    }
+
+    .hq-row { display: grid; grid-template-columns: repeat(3,1fr); margin-bottom: 5rem; }
+
+    .hq-item { display: flex; flex-direction: column; align-items: center; }
+
+    .hq-item__image-wrap { display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+
+    .hq-components .hq-item__image-wrap { height: 200px; }
+    .hq-components .hq-item__image-wrap img { max-height: 180px; max-width: 90px; width: auto; height: auto; display: block; }
+
+    .hq-colourways .hq-item__image-wrap { height: 175px; }
+    .hq-colourways .hq-item__image-wrap img { max-height: 155px; max-width: 155px; width: auto; height: auto; display: block; }
+
+    .hq-item__label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--muted); text-align: center;
+    }
+
+    .hq-palette { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .hq-palette__dots { display: flex; gap: 0.6rem; }
+
+    .palette-dot { width: 28px; height: 28px; border-radius: 50%; display: block; }
+    /* Edit to match actual palette */
+    .dot-1 { background: #e05a38; }
+    .dot-2 { background: #2e7d4e; }
+    .dot-3 { background: #3d5faa; }
+    .dot-4 { background: #60b8d4; }
+
+    .hq-palette__label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: rgba(245,240,232,0.32);
+    }
+
+    /* Panel D — Software */
+    .sw-panel { display: flex; flex-direction: column; align-items: center; gap: 3rem; }
+
+    .sw-panel__label {
+      font-size: 0.65rem; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--accent);
+    }
+
+    .sw-panel__logos {
+      width: 100%; display: flex;
+      justify-content: space-evenly; align-items: center;
+      flex-wrap: wrap; gap: 2rem 0;
+    }
+
+    .sw-logo { display: flex; align-items: center; gap: 0.7rem; }
+
+    .sw-logo__icon {
+      height: 26px; width: auto; display: block;
+      filter: brightness(0) invert(1); opacity: 0.85;
+    }
+
+    .sw-logo__name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem; font-weight: 400;
+      color: var(--cream); letter-spacing: 0.01em;
+      white-space: nowrap; opacity: 0.85;
+    }
+
+    .sw-panel__caption {
+      font-size: 0.9rem; font-weight: 300;
+      color: var(--muted); text-align: center;
+      max-width: 68ch; line-height: 1.65;
+    }
+
+    /* ── Panel image / logo reveals ── */
+    .panel-section img {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .sw-logo {
+      opacity: 0;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .panel-section img.visible,
+    .sw-logo.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .gallery-item.reveal { transition-duration: 0.6s; }
+    .gallery-item.reveal:nth-child(2) { transition-delay: 0.08s; }
+    .gallery-item.reveal:nth-child(3) { transition-delay: 0.16s; }
+    .gallery-item.reveal:nth-child(4) { transition-delay: 0.06s; }
+    .gallery-item.reveal:nth-child(5) { transition-delay: 0.14s; }
+    .gallery-item.reveal:nth-child(6) { transition-delay: 0.22s; }
+    .gallery-item.reveal:nth-child(7) { transition-delay: 0.04s; }
+    .gallery-item.reveal:nth-child(8) { transition-delay: 0.12s; }
+    .gallery-item.reveal:nth-child(9) { transition-delay: 0.20s; }
+
+    .timeline-content.reveal { transition-duration: 0.6s; }
+
+    /* ── Back to top ── */
+    #back-to-top {
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 2.5rem;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(200,169,110,0.25); border-radius: 50%;
+      background: none; cursor: pointer;
+      color: var(--muted); transition: color 0.2s, border-color 0.2s;
+    }
+
+    #back-to-top svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    #back-to-top:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Hamburger button ── */
+    .hamburger {
+      display: none;
+      flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px;
+      background: none; border: none; cursor: pointer;
+      padding: 0.4rem; margin-left: auto;
+      pointer-events: all;
+    }
+
+    .hamburger span {
+      display: block; width: 20px; height: 1.5px;
+      background: var(--cream); border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    /* ── Mobile menu overlay ── */
+    #mobile-menu {
+      position: fixed; inset: 0; z-index: 400;
+      background: rgba(8,8,12,0.75);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #mobile-menu.open { opacity: 1; pointer-events: all; }
+
+    #mobile-menu-close {
+      position: absolute; top: 1.8rem; right: 1.5rem;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    #mobile-menu-close:hover { color: var(--cream); }
+
+    #mobile-menu-close svg {
+      width: 24px; height: 24px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.5; stroke-linecap: round;
+      display: block;
+    }
+
+    #mobile-menu-nav {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 2.5rem;
+    }
+
+    #mobile-menu-nav a {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      letter-spacing: 0.12em; color: var(--cream);
+      text-decoration: none; opacity: 0.85;
+      transition: color 0.2s, opacity 0.2s;
+    }
+
+    #mobile-menu-nav a:hover { color: var(--accent); opacity: 1; }
+
+    /* ════════════════════════════════════════════
+       RESPONSIVE — Tablet  ≤ 900px
+    ════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      :root { --panel-pad: 2rem; }
+
+      /* HUD */
+      .caption-top { display: none; }
+      #hud-bar { padding: 1.5rem 2rem; gap: 1.5rem; }
+      #progress-pct { bottom: 1.5rem; right: 1.5rem; }
+
+      /* Sections */
+      .content-section { padding: 5rem 0; }
+      .text-block { padding: 2.5rem 2rem; }
+
+      /* Grids → single column */
+      .two-col { grid-template-columns: 1fr; gap: 2rem; }
+      .three-col { grid-template-columns: 1fr; }
+
+      /* Text+Image: stack, image below text */
+      .text-image-right,
+      .text-image-left { grid-template-columns: 1fr; gap: 2rem; }
+
+      .text-image-right .ti-image,
+      .text-image-left .ti-image { order: 1; }
+      .text-image-right .ti-text,
+      .text-image-left .ti-text  { order: 0; }
+
+      .text-image-right .ti-image img,
+      .text-image-left .ti-image img { aspect-ratio: 4/3; }
+
+      /* Fullbleed */
+      .fullbleed-wrap img { max-height: 60vh; }
+
+      /* Gallery → 2 col */
+      .gallery-grid { columns: 2; }
+
+      /* Stats → 2 col */
+      .stat-row { grid-template-columns: repeat(2,1fr); }
+
+      /* Pull quote */
+      .pull-quote blockquote { padding-left: 1.5rem; }
+      .pull-quote cite { padding-left: 1.5rem; }
+
+      /* Annotated */
+      .annotated-block { padding: 2.5rem 2rem; }
+      .annotated-diagram { flex-direction: column; }
+      .badge-svg-wrap { flex: none; width: 70%; max-width: none; margin: 0 auto; }
+      .callout-list { padding-right: 0; }
+      .callout-float { opacity: 1; transform: none; }
+
+      /* Panels */
+      .hq-intro { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hq-intro-badge { justify-content: flex-start; }
+      .hq-row { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+      .sbs-captions { grid-template-columns: 1fr; gap: 1.5rem; }
+      .rn-badge-primary { padding: 0 20px; }
+      .rn-badge-secondary { padding: 0 40px; }
+
+      /* Body copy — tighter on tablet */
+      .content-section p, .timeline-content p { line-height: 1.65; }
+    }
+
+    /* ════════════════════════════════════════════
+       RESPONSIVE — Mobile  ≤ 540px
+    ════════════════════════════════════════════ */
+    @media (max-width: 540px) {
+      :root { --panel-pad: 10px; }
+
+      /* HUD — hamburger replaces nav */
+      #hud-bar { padding: 1.2rem 1.2rem; gap: 1rem; }
+      .wordmark { font-size: 1.2rem; }
+      .hud-nav { display: none; }
+      .hamburger { display: flex; }
+
+      /* Hero */
+      #hero h1 { font-size: clamp(3.5rem, 16vw, 6rem); }
+      #hero p { font-size: 0.68rem; letter-spacing: 0.2em; padding: 0.4rem 0.9rem; }
+
+      /* Sections — consistent panel padding via --panel-pad */
+      .content-section { padding: 4rem 0; }
+      .gallery-section { padding: 4rem 0; }
+      .timeline-section { padding: 4rem 0; }
+      .panel-section { padding: 4rem 0; }
+      .annotated-section { padding: 4rem 0; }
+      .section-fullbleed { padding: 4rem 0; }
+
+      /* First panel (pull quote) keeps its own padding; all after get tighter */
+      .text-block { padding: 3rem 2rem; }
+
+      /* Two-col gap collapses to 0 on mobile */
+      .two-col { gap: 0; }
+
+      /* h2 margin on mobile */
+      .section-inner h2, .timeline-header h2, .gallery-header h2 { margin-bottom: 0.5rem; }
+
+      /* Body copy — mobile sizing */
+      .content-section p, .timeline-content p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      /* Centre-align all text sections after the first panel */
+      .content-section:not(:first-of-type) .text-block,
+      .timeline-section .text-block,
+      .gallery-section,
+      .panel-section .text-block,
+      .annotated-section .annotated-block {
+        text-align: center;
+      }
+
+      /* But keep pull-quote left-aligned (it has its own border-left) */
+      .pull-quote { text-align: left; }
+
+      /* Fullbleed — same width as all other panels on mobile */
+      .fullbleed-wrap img { border-radius: 2px; max-height: 50vh; }
+
+      /* Text+Image images — standard aspect, within panel padding */
+      .text-image-right .ti-image img,
+      .text-image-left .ti-image img { aspect-ratio: 16/9; border-radius: 2px; }
+
+      /* Gallery → 1 col */
+      .gallery-grid { columns: 1; }
+
+      /* Stats → 1 col */
+      .stat-row { grid-template-columns: 1fr; }
+
+      /* Annotated */
+      .annotated-block { padding: 2rem 3rem; }
+      .badge-svg-wrap { width: 90%; }
+      .callout-list { gap: 1.2rem; }
+      .badge-ghost { display: none; }
+
+      /* Panels */
+      .hq-row { grid-template-columns: 1fr; }
+      .hq-components .hq-item__image-wrap { height: auto; padding: 1rem 0; }
+      .hq-colourways .hq-item__image-wrap { height: auto; padding: 1rem 0; }
+      .sbs-captions { grid-template-columns: 1fr; gap: 1.2rem; }
+      .rn-badge-primary { padding: 0; }
+      .rn-badge-secondary { padding: 0 10px; }
+
+      /* Software logos — stack vertically, larger gap, smaller icons */
+      .sw-panel__logos { flex-direction: column; align-items: center; gap: 3rem; }
+      .sw-logo__icon { height: 22px; }
+
+      /* Pull quote */
+      .pull-quote blockquote { font-size: clamp(1.8rem, 7vw, 2.5rem); padding-left: 1.2rem; }
+      .pull-quote cite { padding-left: 1.2rem; }
+
+      /* Footer */
+      footer { padding: 4rem 1.5rem; }
+      footer .footer-wordmark { font-size: 2.5rem; }
+
+      /* Lightbox — more touch-friendly */
+      #lightbox-prev { left: 0.25rem; }
+      #lightbox-next { right: 0.25rem; }
+    }
+
+    /* Mobile video fallback — poster image shown instead of video */
+#mobile-poster { display: none; }
+
+@media (max-width: 900px) {
+  #bg-video { display: none; }
+  #mobile-poster {
+    display: block;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    background-image: url('images/poster.jpg'); /* ← change to your still */
+    background-size: cover;
+    background-position: center;
+    opacity: 0.45; /* match the faded-out feel of the video at scroll start */
+  }
+}
+  </style>
+</head>
+<body>
+
+<!-- =====================================================
+     CONFIG — edit only this block for each new project
+     ===================================================== -->
+<script>
+const CONFIG = {
+
+  /* ── Identity ── */
+  title:    "Royal Navy",
+  wordmark: "Royal Navy",
+  caption:  "Badge Design · Personal Work",
+
+  /* ── Hero ── */
+  heroLine1: "Chief",
+  heroLine2: "Petty Officer",
+  heroSub:   "Royal Navy · Insignia Design · 2026",
+
+  /* ── Video (relative path) ── */
+  video: "video.mp4",
+
+  /* ── Sections: true = show, false = hide ── */
+  sections: {
+    pullQuote:  true,
+    intro:      true,
+    textImageR: true,
+    fullbleed:  true,
+    timeline:   true,
+    textImageL: true,
+    annotated:  false,
+    gallery:    true,
+    stats:      false,
+  },
+
+  panels: {
+    badgeSheet:  false,   // Panel A — Royal Navy cap badge
+    sbsVariants: false,   // Panel B — SBS badge variants
+    hqComfor:    false,   // Panel C — HQ Commando Forces
+    software:    true,    // Panel D — software credits (enable on all pages)
+  },
+
+  /* ── Content ── */
+  content: {
+
+    pullQuote: "Completely unofficial, this badge doesn't exist, but maybe, it should",
+    pullQuoteCite: "On the project",
+
+    intro: {
+      chapter: "Chapter 01 The Brief",
+      showChapter: true,
+      heading: "An Icon, Redrawn",
+      body: "The Royal Navy Officers cap badge is one of the most immediately recognisable pieces of military insignia in existence; the fouled anchor, the crown, the laurel wreath. The exercise here was to redraw it with complete technical precision and render it as a photorealistic object. Not reimagined. Perfected.",
+    },
+
+    textImageR: {
+      showChapter: false,
+      heading: "The Fouled Anchor",
+      body: "The fouled anchor, an anchor with a rope wound around it, has been central to Naval heraldry for centuries. Every element of the badge has a specific form and proportion that had to be observed. The work began with understanding exactly what those forms were before redrawing a single line.",
+      image: "images/PO_4.webp",
+      imageAlt: "Royal Navy badge detail",
+    },
+
+    fullbleed: {
+      image: "images/PO_1.webp",
+      caption: "A Surface Study",
+    },
+
+    timeline: {
+      chapter: "Chapter 02 Process",
+      showChapter: true,
+      heading: "How It Was Made",
+      steps: [
+        {
+          n: "01",
+          title: "Reference & Research",
+          body: "Sourced original badge photography, official specifications and heraldic references. The proportions between the crown, anchor and wreath required particular attention, small deviations read immediately against something this familiar.",
+          image: null,
+        },
+        {
+          n: "02",
+          title: "Vector Construction",
+          body: "Built from scratch in Adobe Illustrator. The rope of the fouled anchor was especially involved, a continuous form that winds around the anchor shank with geometric consistency.",
+          image: "images/PO_2.webp",
+        },
+        {
+          n: "03",
+          title: "3D & Materials",
+          body: "Gilded metal, the specific warm gold of a Naval badge required a different material approach to the silver of the army badges. The crown jewels, the enamel elements, the woven laurel: each needed its own material logic.",
+          image: "images/PO_3.webp",
+        },
+        {
+          n: "04",
+          title: "Final Render",
+          body: "Lit to show the badge as it would appear on a cap, direct light catching the crown, softer fill through the wreath, the anchor reading cleanly against both.",
+          image: null,
+        },
+      ],
+    },
+
+    textImageL: {
+      showChapter: false,
+      heading: "Earned, Not Issued",
+      body: "Naval officers earn the right to wear this badge through years of training and sea service. The craft put into rendering it should reflect the craft required to wear it.",
+      image: "images/PO_1.webp",
+      imageAlt: "Final render detail",
+    },
+
+    annotated: {
+      chapter: "The Badge Components",
+      showChapter: true,
+      heading: "Anatomy of the Badge",
+      body: "Every element carries deliberate meaning.",
+      ghostImage: "images/SBS_Badge2.webp",  /* path to faint badge shown behind the panel */
+      callouts: [
+        { id: 'sword',   label: "Dagger",       desc: "The special forces dagger — in this instance shown point down, a reference to the commando tradition." },
+        { id: 'waves',   label: "Waves",        desc: "Two wave forms crossing the dagger. A direct and historical reference to the maritime theatre the unit operates in." },
+        { id: 'scrolls', label: "Motto Scroll", desc: "The scroll carries the regimental motto. A nod to the existing badge, but more in keeping with the wider special forces insignia language." },
+      ],
+    },
+
+    gallery: {
+      label: "Full Series",
+      heading: "All Renders",
+      images: [
+        "images/PO_3.webp", 
+        "images/PO_1.webp",
+        "images/PO_2.webp",
+        "images/PO_4.webp",
+        "images/PO_5.webp",
+        "images/PO_6.webp",
+        "images/PO_7.webp",
+
+
+      ],
+    },
+
+    stats: {
+      chapter: "Chapter 03 — Scope",
+      showChapter: true,
+      heading: "By The Numbers",
+      body: "A focused project with a clear brief — deliver a set of renders that could stand alongside physical photography. Every number below reflects a decision, not an accident.",
+      items: [
+        { value: "9", label: "Final renders delivered",  icon: "aperture" },
+        { value: "4", label: "Lighting setups explored", icon: "light"    },
+        { value: "3", label: "Material iterations",      icon: "layers"   },
+      ],
+    },
+
+    software: {
+      caption: "Vectors produced in Adobe Illustrator. 3D photorealistic renders generated with Adobe Photoshop and Luma. Motion rendered with Flow, Veo and Luma. Research and design iteration assisted by Gemini and Claude. No AI is utilised in Adobe Illustrator, all vectors are hand drawn.",
+      /* logos: array of { src, name } — src is path to logo image */
+      logos: [
+        { src: "images/AdobeLogo.png",  name: "" },
+        { src: "images/Luma Logo.png",  name: "" },
+        { src: "images/GeminiLogo.png", name: "" },
+        { src: "images/ClaudeLogo.png", name: "" },
+      ],
+    },
+
+  },
+
+  /* ── Footer ── */
+  footerCaption: "Royal Navy · Chief Petty Officers Badge · Design · © JASON STONE 2026",
+
+  /* ── Navigation ── */
+  nav: {
+    index: "../index.html",
+    prev:  { label: "Royal Navy", url: "../royal-navy/index.html" },
+    next:  { label: "HQCOMFOR", url: "../hqcomfor/index.html" },
+  },
+
+};
+</script>
+<!-- =====================================================
+     END CONFIG — do not edit below this line
+     ===================================================== -->
+
+  <div id="loading">
+    <div class="loading-ring"></div>
+    <span>Loading</span>
+  </div>
+
+  <div id="progress-bar"></div>
+
+  <div id="video-stage">
+    <video id="bg-video" muted playsinline preload="auto"></video>
+<div id="mobile-poster"></div>
+  </div>
+
+  <div id="hud">
+    <div id="hud-bar">
+      <div class="wordmark" id="hud-wordmark"></div>
+      <div class="hud-nav" id="hud-nav"></div>
+      <div class="caption-top" id="hud-caption"></div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div id="scroll-cue">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+    <div id="progress-pct">0%</div>
+  </div>
+
+  <!-- Mobile full-screen menu overlay -->
+  <div id="mobile-menu">
+    <button id="mobile-menu-close" aria-label="Close menu">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <nav id="mobile-menu-nav"></nav>
+  </div>
+
+  <div id="scroll-content">
+    <section id="hero">
+      <h1 id="hero-title"></h1>
+      <p id="hero-sub"></p>
+    </section>
+  </div>
+
+  <div id="lightbox">
+    <button id="lightbox-close" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button id="lightbox-prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" />
+    <button id="lightbox-next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
+    <div id="lightbox-dots"></div>
+  </div>
+
+  <script>
+  /* ── Helpers ── */
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html !== undefined) e.innerHTML = html;
+    return e;
+  }
+
+  function mkImg(src, alt) {
+    const i = document.createElement('img');
+    i.src = src; i.alt = alt || ''; i.loading = 'lazy';
+    return i;
+  }
+
+  /* ── Identity ── */
+  document.title = CONFIG.title;
+  document.getElementById('hud-wordmark').textContent = CONFIG.wordmark;
+  document.getElementById('hud-caption').textContent  = CONFIG.caption;
+  document.getElementById('bg-video').src             = CONFIG.video;
+
+  /* ── HUD navigation ── */
+  const hudNav = document.getElementById('hud-nav');
+  const n = CONFIG.nav;
+
+  function navSep() {
+    const sep = document.createElement('span');
+    sep.className = 'hud-nav-sep';
+    hudNav.appendChild(sep);
+  }
+
+  if (n.prev && n.prev.url) {
+    const a = document.createElement('a');
+    a.href = n.prev.url;
+    a.innerHTML = `<svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>${n.prev.label}`;
+    hudNav.appendChild(a);
+    navSep();
+  }
+
+  if (n.index) {
+    const idx = document.createElement('a');
+    idx.href = n.index;
+    idx.className = 'hud-nav-index';
+    idx.textContent = 'All Work';
+    hudNav.appendChild(idx);
+  }
+
+  if (n.next && n.next.url) {
+    navSep();
+    const a = document.createElement('a');
+    a.href = n.next.url;
+    a.innerHTML = `${n.next.label}<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+    hudNav.appendChild(a);
+  }
+
+  const heroTitle = document.getElementById('hero-title');
+  const heroText = CONFIG.heroLine2
+    ? CONFIG.heroLine1 + '\n' + CONFIG.heroLine2
+    : CONFIG.heroLine1;
+  heroTitle.innerHTML = CONFIG.heroLine2
+    ? CONFIG.heroLine1 + '<br>' + CONFIG.heroLine2
+    : CONFIG.heroLine1;
+  heroTitle.setAttribute('data-text', heroText);
+  document.getElementById('hero-sub').textContent = CONFIG.heroSub;
+
+  /* ── Section builders ── */
+  const main = document.getElementById('scroll-content');
+
+  function appendSection(inner, sectionCls) {
+    const s  = el('section', sectionCls || 'content-section');
+    const si = el('div', 'section-inner');
+    si.appendChild(inner);
+    s.appendChild(si);
+    main.appendChild(s);
+  }
+
+  function makeTextBlock(children, showChapter, chapterText) {
+    const tb = el('div', 'text-block');
+    if (showChapter && chapterText) tb.appendChild(el('p', 'section-label', chapterText));
+    children.forEach(c => tb.appendChild(c));
+    return tb;
+  }
+
+  /* Pull quote */
+  if (CONFIG.sections.pullQuote) {
+    const pq = el('div', 'pull-quote');
+    pq.appendChild(el('blockquote', '', CONFIG.content.pullQuote));
+    pq.appendChild(el('cite', '', CONFIG.content.pullQuoteCite));
+    appendSection(makeTextBlock([pq]));
+  }
+
+  /* Intro */
+  if (CONFIG.sections.intro) {
+    const c = CONFIG.content.intro;
+    let inner;
+    if (c.layout === 'stacked') {
+      /* Full-width stacked: label → h2 → body, no two-col split */
+      inner = el('div', 'intro-stacked');
+      inner.appendChild(el('h2', '', c.heading));
+      inner.appendChild(el('p', '', c.body));
+    } else {
+      /* Default: two-col, heading left, body right */
+      inner = el('div', 'two-col');
+      inner.appendChild(el('h2', '', c.heading));
+      inner.appendChild(el('p', '', c.body));
+    }
+    appendSection(makeTextBlock([inner], c.showChapter, c.chapter));
+  }
+
+  /* Text + image right */
+  if (CONFIG.sections.textImageR) {
+    const c  = CONFIG.content.textImageR;
+    const ti = el('div', 'text-image-right');
+    const tt = el('div', 'ti-text');
+    tt.appendChild(el('h2', '', c.heading));
+    tt.appendChild(el('p', '', c.body));
+    const td = el('div', 'ti-image');
+    td.appendChild(mkImg(c.image, c.imageAlt));
+    ti.appendChild(tt); ti.appendChild(td);
+    appendSection(makeTextBlock([ti], c.showChapter, c.chapter));
+  }
+
+  /* Full width image */
+  if (CONFIG.sections.fullbleed) {
+    const c  = CONFIG.content.fullbleed;
+    const s  = el('section', 'content-section section-fullbleed');
+    const fw = el('div', 'fullbleed-wrap');
+    fw.appendChild(mkImg(c.image, c.caption));
+    if (c.caption) fw.appendChild(el('span', 'fullbleed-caption', c.caption));
+    s.appendChild(fw);
+    main.appendChild(s);
+  }
+
+  /* Timeline */
+  if (CONFIG.sections.timeline) {
+    const c  = CONFIG.content.timeline;
+    const s  = el('section', 'timeline-section');
+    const ti = el('div', 'timeline-inner');
+    const tb = el('div', 'text-block');
+    if (c.showChapter && c.chapter) tb.appendChild(el('p', 'section-label', c.chapter));
+    const th = el('div', 'timeline-header');
+    th.appendChild(el('h2', '', c.heading));
+    tb.appendChild(th);
+    const steps = el('div', 'timeline-steps');
+    c.steps.forEach(step => {
+      const content = el('div', 'timeline-content');
+      content.appendChild(el('p', 'timeline-step-label', step.n));
+      content.appendChild(el('h3', '', step.title));
+      content.appendChild(el('p', '', step.body));
+      if (step.image) {
+        const si = el('div', 'step-image');
+        si.appendChild(mkImg(step.image, step.title));
+        content.appendChild(si);
+      }
+      steps.appendChild(content);
+    });
+    tb.appendChild(steps);
+    ti.appendChild(tb);
+    s.appendChild(ti);
+    main.appendChild(s);
+  }
+
+  /* Text + image left */
+  if (CONFIG.sections.textImageL) {
+    const c  = CONFIG.content.textImageL;
+    const ti = el('div', 'text-image-left');
+    const td = el('div', 'ti-image');
+    td.appendChild(mkImg(c.image, c.imageAlt));
+    const tt = el('div', 'ti-text');
+    tt.appendChild(el('h2', '', c.heading));
+    tt.appendChild(el('p', '', c.body));
+    ti.appendChild(td); ti.appendChild(tt);
+    appendSection(makeTextBlock([ti], c.showChapter, c.chapter));
+  }
+
+  /* Annotated / Badge diagram */
+  if (CONFIG.sections.annotated) {
+    const c = CONFIG.content.annotated;
+    const s = document.createElement('section');
+    s.className = 'annotated-section';
+    const ai = document.createElement('div');
+    ai.className = 'annotated-inner';
+    const ab = document.createElement('div');
+    ab.className = 'annotated-block';
+
+    if (c.showChapter && c.chapter) ab.appendChild(el('p', 'annotated-label', c.chapter));
+
+    /* Ghost badge — path from CONFIG */
+    const ghost = document.createElement('div');
+    ghost.className = 'badge-ghost';
+    ghost.innerHTML = `<img src="${c.ghostImage}" alt="">`;
+    ab.appendChild(ghost);
+
+    const diagram = document.createElement('div');
+    diagram.className = 'annotated-diagram';
+
+    const badgeWrap = document.createElement('div');
+    badgeWrap.className = 'badge-svg-wrap';
+
+    /* ── SVG source — replace this entire block for a new project badge ── */
+    const svgSource = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 417.63 458.56">
+  <defs><style>.cls-1{fill:#f5f0e8}.cls-2,.cls-3{fill:none;stroke:#f5f0e8;stroke-width:2.97px}.cls-3{stroke-miterlimit:10}</style></defs>
+  <g id="scroll_base_left"><path class="cls-3" d="M113.1,293.73c11.07,16.24,29.44,34.55,59.93,41.07"/></g>
+  <g id="motto"><g><g><path class="cls-1" d="M243.31,271.1c-1.21-5.17-2.43-10.33-3.66-15.49.65-.35.98-.53,1.62-.89,3.91,4.9,5.86,7.33,9.74,12.16-.76.48-1.14.71-1.9,1.17-.81-1.07-1.21-1.6-2.02-2.67-1.05.61-1.58.9-2.66,1.46.35,1.32.52,1.98.87,3.3-.79.4-1.19.6-2,.97ZM245.82,263.7c-1.36-1.81-2.04-2.71-3.4-4.52-.02,0-.02.01-.04.02.6,2.23.9,3.35,1.49,5.57.79-.42,1.18-.63,1.95-1.07Z"/><path class="cls-1" d="M253.31,265.24c-2.82-5.53-4.23-8.29-7.04-13.81.7-.51,1.05-.76,1.74-1.29,2.78,2.5,4.17,3.74,6.93,6.21.01-.01.02-.02.03-.03-1.7-3.33-2.55-4.99-4.24-8.32.7-.58,1.05-.87,1.75-1.46,2.82,5.53,4.23,8.29,7.04,13.81-.65.56-.98.83-1.65,1.38-2.77-2.44-4.16-3.67-6.95-6.15-.01.01-.02.02-.04.03,1.69,3.32,2.54,4.98,4.23,8.3-.72.55-1.08.82-1.81,1.34Z"/><path class="cls-1" d="M262.75,257.72c-3.03-5.41-4.54-8.12-7.57-13.53.97-.96,1.45-1.44,2.41-2.43.93-.96,1.8-1.39,2.61-1.29.82.1,1.53.71,2.16,1.83,1.42,2.53,2.13,3.8,3.54,6.33.71,1.27.98,2.47.81,3.61-.17,1.14-.73,2.21-1.69,3.2-.9.92-1.35,1.38-2.27,2.28ZM257.83,244.38c2.21,3.95,3.32,5.93,5.53,9.88.3-.3.45-.46.75-.76.45-.47.7-.94.74-1.41.04-.47-.11-1-.43-1.58-1.46-2.61-2.19-3.91-3.65-6.52-.3-.53-.62-.85-.96-.96-.34-.1-.75.09-1.22.58-.3.31-.45.46-.75.76Z"/><path class="cls-1" d="M269.58,233.15c-.3-.54-.5-1.11-.58-1.7-.08-.59-.07-1.17.03-1.74.09-.54.26-1.06.49-1.55.23-.49.51-.92.82-1.27.32-.36.67-.64,1.06-.86.39-.21.8-.34,1.19-.35.39,0,.79.13,1.18.37.39.25.73.64,1.04,1.19l.38.68c-.62.7-.94,1.06-1.56,1.76l-.38-.68c-.26-.47-.56-.7-.89-.68-.33.01-.64.18-.93.51s-.47.71-.55,1.17c-.08.46,0,.92.27,1.39,1.6,2.86,2.4,4.29,4,7.15.26.47.56.7.89.68.33-.01.64-.19.93-.51.28-.32.47-.71.55-1.17.08-.46,0-.92-.27-1.39-.57-1.02-.86-1.53-1.43-2.55-.49.56-.74.84-1.24,1.4-.38-.68-.57-1.03-.96-1.71,1.12-1.27,1.68-1.9,2.8-3.17.95,1.7,1.43,2.55,2.38,4.26.32.57.52,1.14.59,1.72.07.58.06,1.14-.03,1.68-.1.57-.26,1.1-.5,1.59-.23.49-.51.92-.82,1.27-.32.36-.67.64-1.06.86-.39.21-.79.31-1.18.32-.39.01-.8-.08-1.17-.31-.38-.23-.73-.63-1.05-1.2-1.6-2.86-2.4-4.29-4-7.15Z"/><path class="cls-1" d="M280.21,215.1c2.35,4.2,3.52,6.29,5.87,10.49.25.44.41.92.49,1.43.08.51.08,1.04,0,1.58-.08.55-.23,1.07-.45,1.56-.22.5-.51.94-.86,1.32-.35.38-.73.65-1.13.82s-.8.24-1.2.2-.77-.16-1.11-.39c-.34-.23-.64-.56-.89-1-2.35-4.2-3.52-6.29-5.87-10.49.63-.7.94-1.04,1.58-1.73,2.31,4.12,3.46,6.18,5.77,10.3.27.48.56.74.88.76s.61-.11.89-.42c.28-.3.45-.67.51-1.09.06-.43-.04-.88-.31-1.36-2.31-4.12-3.46-6.18-5.77-10.3.64-.68.96-1.02,1.6-1.69Z"/><path class="cls-1" d="M290.95,224.99c-3.03-5.41-4.54-8.12-7.57-13.53.66-.65.99-.97,1.65-1.6,3.03,5.41,4.54,8.12,7.57,13.53-.66.63-.99.95-1.65,1.6Z"/><path class="cls-1" d="M296.32,220.24c-3.03-5.41-4.54-8.12-7.57-13.53.68-.6,1.03-.9,1.72-1.48,2.6,4.64,3.89,6.96,6.49,11.59,1.37-1.15,2.07-1.71,3.48-2.78.43.78.65,1.16,1.08,1.94-2.13,1.61-3.17,2.47-5.2,4.26Z"/><path class="cls-1" d="M304.48,214.44c-3.03-5.41-4.54-8.12-7.57-13.53,2.2-1.5,3.32-2.2,5.65-3.46.41.73.61,1.09,1.02,1.82-1.55.84-2.3,1.29-3.79,2.24.89,1.59,1.33,2.38,2.22,3.97,1.3-.82,1.95-1.22,3.29-1.96.41.73.61,1.09,1.02,1.82-1.34.74-2,1.14-3.29,1.96.89,1.59,1.33,2.38,2.22,3.97,1.49-.95,2.24-1.4,3.79-2.24.43.78.65,1.16,1.08,1.94-2.33,1.26-3.45,1.96-5.65,3.46Z"/></g><g><path class="cls-1" d="M88.69,215.07c-.66-.63-1-.95-1.66-1.57.1-.17.15-.26.25-.43.25-.44.38-.91.38-1.39,0-.49-.21-.93-.64-1.32-.23-.21-.45-.33-.65-.36-.2-.03-.4,0-.56.07-.18.08-.35.22-.5.4-.15.18-.29.38-.42.61-.15.26-.27.49-.35.68-.08.19-.13.39-.14.58-.01.2.02.4.09.62.07.21.19.47.35.77.38.7.57,1.05.95,1.76.28.51.47.98.57,1.42.1.44.14.87.1,1.27-.04.41-.17.84-.34,1.26-.18.43-.4.88-.69,1.38-.32.57-.67,1.05-1.05,1.44-.37.39-.77.66-1.18.79-.43.14-.89.13-1.37,0-.49-.14-1-.46-1.54-.95-.41-.37-.74-.79-1.01-1.27s-.44-.97-.53-1.49c-.09-.51-.1-1.03-.04-1.54.07-.51.23-1,.49-1.45.16-.29.25-.43.41-.72.69.59,1.03.88,1.71,1.48-.14.24-.21.36-.35.61-.2.35-.29.75-.27,1.2.02.45.25.86.68,1.25.29.26.54.42.75.47.21.05.41.03.6-.07.19-.1.36-.26.52-.49.16-.23.32-.5.49-.8.2-.35.36-.65.46-.9.11-.25.17-.48.18-.67,0-.2-.03-.42-.11-.62-.08-.2-.19-.45-.34-.74-.35-.67-.53-1-.89-1.65-.54-.99-.78-1.87-.71-2.65.07-.78.34-1.59.83-2.43.29-.5.62-.93,1.01-1.28.38-.35.8-.58,1.22-.7.42-.12.87-.13,1.34,0,.47.12.96.41,1.45.86.42.38.75.82.99,1.31.24.5.41,1.01.49,1.53.15,1.08,0,2.01-.44,2.79-.22.38-.32.57-.54.95Z"/><path class="cls-1" d="M86.91,228.5c2.66-4.66,3.99-6.99,6.65-11.65-.75-.76-1.13-1.14-1.89-1.88.41-.73.62-1.09,1.04-1.82,2.17,2.14,3.24,3.24,5.36,5.46-.41.73-.62,1.09-1.04,1.82-.74-.78-1.11-1.16-1.86-1.93-2.66,4.66-3.99,6.99-6.65,11.65-.64-.66-.97-.99-1.62-1.65Z"/><path class="cls-1" d="M92.11,234.4c3.19-5.32,4.79-7.98,7.98-13.3,1,1.11,1.5,1.67,2.49,2.79,1.82,2.05,1.95,4.37.39,6.97-.47.78-.97,1.34-1.49,1.67s-1.14.38-1.83.16c-.79,3.18-1.18,4.77-1.97,7.95-.66-.74-.98-1.11-1.64-1.84.79-2.92,1.18-4.38,1.97-7.3-.37-.42-.56-.62-.93-1.04-1.36,2.27-2.04,3.41-3.41,5.68-.62-.69-.93-1.04-1.55-1.73ZM100.56,224.63c-.99,1.66-1.49,2.49-2.49,4.15.35.39.53.59.88.99.27.31.52.5.74.59.22.09.43.1.62.02.18-.07.37-.24.55-.46.18-.22.38-.5.58-.84.2-.34.36-.65.49-.94.12-.29.19-.58.22-.87.02-.56-.24-1.15-.78-1.75-.32-.36-.48-.54-.81-.9Z"/><path class="cls-1" d="M99.88,244.34c3.08-5.39,4.61-8.08,7.69-13.47,1.89,2.03,2.84,3.03,4.76,5.02-.41.73-.62,1.09-1.04,1.82-1.27-1.32-1.91-1.98-3.17-3.32-.9,1.58-1.35,2.37-2.26,3.95,1.1,1.17,1.65,1.75,2.76,2.9-.41.73-.62,1.09-1.04,1.82-1.11-1.15-1.66-1.73-2.76-2.9-.9,1.58-1.35,2.37-2.26,3.95,1.26,1.34,1.9,2,3.17,3.32-.44.77-.66,1.16-1.1,1.93-1.92-1.98-2.87-2.99-4.76-5.02Z"/><path class="cls-1" d="M107.39,252.65c3.08-5.39,4.61-8.08,7.69-13.47.63.63.94.94,1.57,1.56-.86,4.22-1.29,6.32-2.14,10.51.01.01.02.02.03.03,1.85-3.25,2.78-4.87,4.63-8.11.67.63,1,.94,1.67,1.55-3.08,5.39-4.61,8.08-7.69,13.47-.63-.58-.95-.87-1.57-1.46.83-4.2,1.25-6.3,2.09-10.52-.01-.01-.02-.02-.03-.03-1.85,3.24-2.77,4.86-4.62,8.09-.66-.64-.98-.97-1.63-1.62Z"/><path class="cls-1" d="M122.7,250.1c.31-.54.67-.95,1.07-1.22.41-.27.83-.43,1.27-.47.42-.04.85.02,1.27.16.43.15.82.36,1.18.64.36.28.67.63.95,1.04.27.41.5.87.62,1.34.13.48.15,1,.09,1.55-.06.55-.25,1.09-.56,1.63-.16.27-.23.41-.39.68-.72-.53-1.08-.8-1.79-1.34.16-.27.23-.41.39-.68.27-.47.34-.9.23-1.31-.11-.4-.33-.74-.65-.99s-.66-.37-1.02-.34c-.36.03-.67.28-.94.74-1.62,2.84-2.44,4.27-4.06,7.11-.27.47-.35.91-.24,1.32.11.41.32.75.65,1,.32.26.67.37,1.03.33.36-.04.68-.29.95-.75.58-1.01.87-1.52,1.45-2.53-.56-.43-.85-.65-1.4-1.1.39-.68.58-1.02.97-1.7,1.26,1.01,1.9,1.5,3.19,2.44-.97,1.69-1.45,2.54-2.42,4.24-.32.57-.69.99-1.1,1.26-.41.27-.83.44-1.26.49-.45.06-.89.02-1.33-.12-.43-.13-.83-.34-1.18-.63-.36-.28-.67-.64-.94-1.06-.27-.42-.45-.9-.57-1.39-.12-.49-.17-1.03-.11-1.57.06-.55.25-1.1.58-1.67,1.62-2.84,2.44-4.27,4.06-7.11Z"/><path class="cls-1" d="M127.75,267.98c2.54-4.73,3.81-7.09,6.35-11.82-.89-.52-1.32-.8-2.19-1.35.4-.74.59-1.11.99-1.84,2.49,1.59,3.76,2.33,6.39,3.65-.4.74-.59,1.11-.99,1.84-.92-.46-1.37-.7-2.27-1.2-2.54,4.73-3.81,7.09-6.35,11.82-.78-.43-1.16-.65-1.93-1.1Z"/><path class="cls-1" d="M134.91,271.64c2.72-5.38,4.08-8.07,6.79-13.45.83.38,1.24.56,2.08.91-1.16,2.3-1.75,3.46-2.91,5.76,1.04.43,1.56.64,2.62,1.03,1.16-2.3,1.75-3.46,2.91-5.76.86.31,1.29.46,2.17.75-2.72,5.38-4.08,8.07-6.79,13.45-.87-.28-1.31-.43-2.17-.75,1.21-2.4,1.81-3.59,3.02-5.99-1.06-.39-1.59-.59-2.62-1.03-1.21,2.4-1.81,3.59-3.02,5.99-.84-.35-1.26-.53-2.08-.91Z"/><path class="cls-1" d="M54.56,204.59c2.87-5.32,4.31-7.98,7.19-13.3,1.13.44,1.69.68,2.79,1.19.6.28,1.06.62,1.38,1.02.32.4.52.82.61,1.27.09.45.09.91-.02,1.38-.11.47-.28.92-.51,1.35-.11.19-.16.29-.26.49-.2.36-.39.65-.57.87-.19.22-.39.39-.59.52-.39.24-.86.37-1.42.4.32.44.47.92.45,1.44s-.22,1.14-.61,1.85c-.16.3-.24.45-.4.75-.63,1.17-1.39,1.92-2.27,2.25-.88.34-1.92.19-3.15-.37-1.03-.47-1.55-.69-2.61-1.1ZM62.7,193.87c-.79,1.47-1.19,2.2-1.98,3.66.34.15.51.23.85.38.63.29,1.13.34,1.51.12.38-.21.74-.62,1.07-1.23.32-.6.45-1.11.37-1.52-.07-.42-.42-.78-1.05-1.06-.31-.14-.47-.21-.78-.35ZM59.81,199.22c-.92,1.7-1.38,2.56-2.3,4.26.33.14.49.22.82.37.38.18.71.26.98.25s.52-.08.74-.23c.22-.14.41-.35.58-.61.17-.26.35-.55.52-.88.18-.34.32-.64.42-.91.1-.27.15-.52.13-.74-.02-.23-.12-.44-.29-.62-.16-.18-.42-.35-.76-.51-.33-.15-.5-.23-.83-.38Z"/><path class="cls-1" d="M64.81,210.43c1.3-2.28,1.95-3.42,3.25-5.69.73-3.74,1.09-5.59,1.79-9.28.83.45,1.24.68,2.05,1.15-.61,2.5-.91,3.76-1.52,6.27.01,0,.02.01.04.02,1.83-1.76,2.74-2.64,4.56-4.39.79.52,1.18.78,1.96,1.32-2.78,2.41-4.18,3.62-6.98,6.08-1.3,2.28-1.95,3.42-3.25,5.69-.75-.48-1.13-.71-1.89-1.17Z"/></g></g></g>
+  <g id="Wave_top_left"><g><path class="cls-3" d="M75.06,187.83c31.92,6.13,66.58-4.67,98.87-8.13"/><path class="cls-3" d="M173.99,208.55c-20.3,2.13-41.41,7.27-62.22,9.26"/></g></g>
+  <g id="wave_top_right"><g><path class="cls-3" d="M302.87,187.83c-31.92,6.13-66.58-4.67-98.87-8.13"/><path class="cls-3" d="M203.95,208.55c20.3,2.13,41.41,7.27,62.22,9.26"/></g></g>
+  <g id="handle_right"><path class="cls-3" d="M199.92,55.67c.97,1.45,1.56,3.18,1.64,5.03,0,.15.01.31.01.46,0,.08,0,.16,0,.23,2.16,1.82,3.53,4.55,3.53,7.6,0,1.18-.2,2.31-.58,3.35,1.8,1.8,2.92,4.29,2.92,7.04,0,1.51-.34,2.94-.94,4.22,1.27,1.67,2.03,3.76,2.03,6.02,0,1.71-.43,3.32-1.19,4.73,1,1.55,1.58,3.39,1.58,5.37,0,1.87-.52,3.62-1.41,5.11.59,1.26.91,2.67.91,4.16,0,2.12-.67,4.09-1.8,5.7.3.94.46,1.94.46,2.98,0,2.18-.7,4.2-1.89,5.84.13.63.2,1.29.2,1.96,0,2.55-.96,4.87-2.54,6.63"/></g>
+  <g id="grip_8"><path class="cls-3" d="M173.47,123.24c8.78,4.11,20.98,3.56,29.36,8.88"/></g>
+  <g id="grip_7"><path class="cls-3" d="M171.14,112.53c9.62,5.84,25.67,4.19,34.46,10.38"/></g>
+  <g id="grip_6"><path class="cls-3" d="M171.33,102.11c10.07,6.44,25.82,3.96,35.41,12.44"/></g>
+  <g id="grip_5"><path class="cls-3" d="M171.14,91.29c10.27,6.81,27.45,4.21,37.22,13.74"/></g>
+  <g id="grip_4"><path class="cls-3" d="M171.56,81.27c10.24,6.66,26.76,3.6,36.44,13.43"/></g>
+  <g id="grip_3"><path class="cls-3" d="M173.33,72.37c9.85,5.16,24.78,3.02,33.92,11.54"/></g>
+  <g id="grip_2"><path class="cls-3" d="M176.09,63.73c8.73,3.46,20.94,2.9,29.23,8.87"/></g>
+  <g id="grip_1"><path class="cls-3" d="M178.89,55.99c6.99,2.13,16.24,2.37,23.24,5.64"/></g>
+  <g id="handle_left"><path class="cls-3" d="M175.94,132.12c-1.67-1.78-2.69-4.17-2.69-6.8,0-.72.08-1.41.22-2.08-1.52-1.75-2.44-4.03-2.44-6.52,0-1.49.33-2.91.92-4.18-1.13-1.61-1.79-3.58-1.79-5.7,0-1.78.47-3.44,1.28-4.88-.93-1.51-1.46-3.28-1.46-5.18,0-2.09.64-4.02,1.74-5.62-.48-1.17-.74-2.44-.74-3.78,0-2.08.64-4.01,1.73-5.6-.25-.87-.38-1.79-.38-2.73,0-2.29.77-4.4,2.07-6.08-.17-.73-.26-1.49-.26-2.28,0-2.58.99-4.94,2.6-6.71-.09-.53-.13-1.07-.13-1.62,0-2.57.98-4.91,2.58-6.68"/></g>
+  <g id="hand_guard"><rect class="cls-3" x="159.34" y="132.12" width="60.22" height="29.33" transform="translate(378.9 293.56) rotate(180)"/></g>
+  <g id="pommel"><path class="cls-3" d="M164.52,26.35h49.87v12.52c0,9.27-7.53,16.8-16.8,16.8h-16.26c-9.27,0-16.8-7.53-16.8-16.8v-12.52h0Z" transform="translate(378.9 82.02) rotate(-180)"/></g>
+  <g id="shield"><path class="cls-3" d="M378.22,144V1.48H1.48v142.52c.12,122.12,65.35,250.26,188.31,312.92,0,0,189.63-84.01,188.43-312.92Z"/></g>
+  <g id="sword_edge_top_right"><line class="cls-3" x1="204.9" y1="217.81" x2="204.9" y2="161.44"/></g>
+  <g id="sword_middle_base"><path class="cls-1" d="M190.45,245.25c-.07,0-1.32,135.05-1.52,134.91,0,0-1.45-134.91-1.45-134.91h2.97Z"/></g>
+  <g id="sword_middle_top"><line class="cls-2" x1="188.97" y1="176.98" x2="188.97" y2="216.34"/></g>
+  <g id="sword_edge_top_left"><line class="cls-3" x1="173.03" y1="161.44" x2="173.03" y2="218.66"/></g>
+  <g id="sword_v"><polyline class="cls-3" points="172.69 161.44 188.97 176.98 204.9 161.44"/></g>
+  <g id="sword_base"><path class="cls-3" d="M173.03,246.89v134.95c0,11.33,10.93,26.72,15.93,31.23,5.01-4.51,15.93-19.91,15.93-31.23v-135.11"/></g>
+  <g id="wave_base"><g><path class="cls-3" d="M228.8,251.85c-13.03-2.96-26.11-6.45-39.35-6.6-13.38.15-26.6,3.72-39.78,6.7"/><path class="cls-3" d="M118.69,227c23.5.77,46.87-10.23,70.76-10.65,23.56.42,46.62,11.12,69.78,10.68"/></g></g>
+  <g id="scroll_base_left_to_sword"><path class="cls-3" d="M173.99,302.71c-5.77-1.57-11.17-4.01-16.04-7.19"/></g>
+  <g id="scroll_under_2_left"><path class="cls-3" d="M71.74,228.4l-6.07,13.89c-20.99-9.18-35.11-23.26-31.53-31.45"/></g>
+  <g id="scroll_under_1_left"><path class="cls-3" d="M120.39,277.54l-6.58,16.14c21.22,8.65,42.25,10.1,44.53,1.01"/></g>
+  <g id="main_scroll_left"><path class="cls-3" d="M158.65,293.58c-45.87-13.68-58.75-31.18-70.12-46.62-9.75-13.24-18.17-24.68-53.99-37.41l12.09-34.04c46.25,16.44,59.96,35.06,70.98,50.03,9.54,12.96,17.07,23.2,51.35,33.42l-10.32,34.61Z"/></g>
+  <g id="scroll_base_base_right"><path class="cls-3" d="M264.83,293.73c-11.07,16.24-29.44,34.55-59.93,41.07"/></g>
+  <g id="scroll_base_right_to_sword"><path class="cls-3" d="M203.95,302.71c5.77-1.57,11.17-4.01,16.04-7.19"/></g>
+  <g id="scroll_under_2_right"><path class="cls-3" d="M306.2,228.4l6.07,13.89c20.99-9.18,35.11-23.26,31.53-31.45"/></g>
+  <g id="scroll_under_1_right"><path class="cls-3" d="M257.55,277.54l6.58,16.14c-21.22,8.65-42.25,10.1-44.53,1.01"/></g>
+  <g id="main_scroll_right"><path class="cls-3" d="M219.29,293.58c45.87-13.68,58.75-31.18,70.12-46.62,9.75-13.24,18.17-24.68,53.99-37.41l-12.09-34.04c-46.25,16.44-59.96,35.06-70.98,50.03-9.54,12.96-17.07,23.2-51.35,33.42l10.32,34.61Z"/></g>
+</svg>`;
+
+    /* ── badgeParts — draw-on sequence, replace for new projects ── */
+    const badgeParts = [
+      { id: 'shield',                     dl: 1650, dd: 0.0  },
+      { id: 'pommel',                      dl: 200,  dd: 0.6  },
+      { id: 'handle_left',                 dl: 600,  dd: 0.75 },
+      { id: 'handle_right',                dl: 600,  dd: 0.75 },
+      { id: 'grip_1',                      dl: 60,   dd: 0.9  },
+      { id: 'grip_2',                      dl: 60,   dd: 0.95 },
+      { id: 'grip_3',                      dl: 60,   dd: 1.0  },
+      { id: 'grip_4',                      dl: 60,   dd: 1.05 },
+      { id: 'grip_5',                      dl: 60,   dd: 1.1  },
+      { id: 'grip_6',                      dl: 60,   dd: 1.15 },
+      { id: 'grip_7',                      dl: 60,   dd: 1.2  },
+      { id: 'grip_8',                      dl: 60,   dd: 1.25 },
+      { id: 'hand_guard',                  dl: 200,  dd: 1.3  },
+      { id: 'sword_v',                     dl: 80,   dd: 1.45 },
+      { id: 'sword_edge_top_left',         dl: 80,   dd: 1.5  },
+      { id: 'sword_edge_top_right',        dl: 80,   dd: 1.5  },
+      { id: 'sword_middle_top',            dl: 60,   dd: 1.55 },
+      { id: 'sword_base',                  dl: 500,  dd: 1.6  },
+      { id: 'sword_middle_base',           dl: 0,    dd: 1.9,  isFill: true },
+      { id: 'wave_base',                   dl: 500,  dd: 1.8  },
+      { id: 'Wave_top_left',               dl: 300,  dd: 1.9  },
+      { id: 'wave_top_right',              dl: 300,  dd: 1.9  },
+      { id: 'main_scroll_left',            dl: 800,  dd: 2.0  },
+      { id: 'main_scroll_right',           dl: 800,  dd: 2.0  },
+      { id: 'scroll_under_1_left',         dl: 200,  dd: 2.15 },
+      { id: 'scroll_under_1_right',        dl: 200,  dd: 2.15 },
+      { id: 'scroll_under_2_left',         dl: 200,  dd: 2.2  },
+      { id: 'scroll_under_2_right',        dl: 200,  dd: 2.2  },
+      { id: 'scroll_base_left',            dl: 150,  dd: 2.25 },
+      { id: 'scroll_base_base_right',      dl: 150,  dd: 2.25 },
+      { id: 'scroll_base_left_to_sword',   dl: 100,  dd: 2.3  },
+      { id: 'scroll_base_right_to_sword',  dl: 100,  dd: 2.3  },
+      { id: 'motto',                       dl: 0,    dd: 2.5,  isFill: true },
+    ];
+
+    const parser = new DOMParser();
+    const parsedSvg = parser.parseFromString(svgSource, 'image/svg+xml').documentElement;
+    parsedSvg.classList.add('badge-svg');
+
+    badgeParts.forEach(part => {
+      const g = parsedSvg.querySelector('#' + part.id);
+      if (!g) return;
+      if (part.isFill) {
+        g.querySelectorAll('path,rect,line,polyline,polygon').forEach(el => {
+          el.classList.add('draw-fill');
+          el.style.setProperty('--dd', part.dd + 's');
+        });
+      } else {
+        g.querySelectorAll('path,rect,line,polyline,polygon').forEach(el => {
+          el.classList.add('draw-stroke');
+          el.style.setProperty('--dl', part.dl);
+          el.setAttribute('stroke-dasharray', part.dl);
+          el.setAttribute('stroke-dashoffset', part.dl);
+          el.style.setProperty('--dd', part.dd + 's');
+        });
+      }
+    });
+
+    badgeWrap.appendChild(parsedSvg);
+    diagram.appendChild(badgeWrap);
+
+    /* Callout list — label and desc from CONFIG */
+    const calloutList = document.createElement('div');
+    calloutList.className = 'callout-list';
+    const floatEls = [];
+    c.callouts.forEach((co, i) => {
+      const floatEl = document.createElement('div');
+      floatEl.className = 'callout-float';
+      floatEl.style.transitionDelay = (0.08 * i) + 's';
+      floatEl.innerHTML = `<div class="callout-float-label">${co.label}</div><div class="callout-float-desc">${co.desc}</div>`;
+      calloutList.appendChild(floatEl);
+      floatEls.push(floatEl);
+    });
+
+    diagram.appendChild(calloutList);
+    ab.appendChild(diagram);
+    ai.appendChild(ab);
+    s.appendChild(ai);
+    main.appendChild(s);
+
+    /* IntersectionObserver: draw badge then reveal labels */
+    const badgeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        parsedSvg.classList.add('drawn');
+        setTimeout(() => {
+          floatEls.forEach((floatEl, i) => {
+            setTimeout(() => floatEl.classList.add('visible'), i * 220);
+          });
+        }, 2700);
+        badgeObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.2 });
+
+    badgeObserver.observe(badgeWrap);
+  }
+
+  /* Gallery */
+  if (CONFIG.sections.gallery) {
+    const c    = CONFIG.content.gallery;
+    const s    = el('section', 'gallery-section');
+    const gi   = el('div', 'gallery-inner');
+    const gh   = el('div', 'gallery-header');
+    gh.appendChild(el('p', 'gallery-label', c.label));
+    gh.appendChild(el('h2', '', c.heading));
+    gi.appendChild(gh);
+    const grid = el('div', 'gallery-grid');
+    c.images.forEach((src, i) => {
+      const item = el('div', 'gallery-item');
+      item.dataset.index = i;
+      item.appendChild(mkImg(src, 'Image ' + (i + 1)));
+      grid.appendChild(item);
+    });
+    gi.appendChild(grid);
+    s.appendChild(gi);
+    main.appendChild(s);
+  }
+
+  /* Stats */
+  if (CONFIG.sections.stats) {
+    const c  = CONFIG.content.stats;
+    const tc = el('div', 'two-col');
+    tc.appendChild(el('h2', '', c.heading));
+    tc.appendChild(el('p', '', c.body));
+    const sr = el('div', 'stat-row');
+
+    const ICONS = {
+      aperture: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="18" style="--dash-len:114"/>
+        <line x1="24" y1="6"  x2="16" y2="24" style="--dash-len:40"/>
+        <line x1="24" y1="6"  x2="32" y2="24" style="--dash-len:40"/>
+        <line x1="6"  y1="27" x2="24" y2="20" style="--dash-len:40"/>
+        <line x1="6"  y1="27" x2="16" y2="38" style="--dash-len:40"/>
+        <line x1="24" y1="42" x2="32" y2="24" style="--dash-len:40"/>
+        <line x1="24" y1="42" x2="16" y2="28" style="--dash-len:40"/>
+        <line x1="42" y1="27" x2="24" y2="20" style="--dash-len:40"/>
+        <line x1="42" y1="27" x2="32" y2="38" style="--dash-len:40"/>
+      </svg>`,
+      light: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="22" r="8" style="--dash-len:52"/>
+        <line x1="24" y1="6"  x2="24" y2="2"  style="--dash-len:10"/>
+        <line x1="24" y1="38" x2="24" y2="42" style="--dash-len:10"/>
+        <line x1="8"  y1="22" x2="4"  y2="22" style="--dash-len:10"/>
+        <line x1="40" y1="22" x2="44" y2="22" style="--dash-len:10"/>
+        <line x1="13" y1="11" x2="10" y2="8"  style="--dash-len:10"/>
+        <line x1="35" y1="11" x2="38" y2="8"  style="--dash-len:10"/>
+        <line x1="13" y1="33" x2="10" y2="36" style="--dash-len:10"/>
+        <line x1="35" y1="33" x2="38" y2="36" style="--dash-len:10"/>
+        <line x1="18" y1="38" x2="30" y2="38" style="--dash-len:16"/>
+        <line x1="20" y1="43" x2="28" y2="43" style="--dash-len:12"/>
+      </svg>`,
+      layers: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="4,24 24,14 44,24" style="--dash-len:60"/>
+        <polyline points="4,24 24,34 44,24" style="--dash-len:60"/>
+        <polyline points="4,32 24,42 44,32" style="--dash-len:60"/>
+        <polyline points="4,16 24,6  44,16" style="--dash-len:60"/>
+      </svg>`,
+      frames: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6"  y="6"  width="36" height="36" rx="2" style="--dash-len:145"/>
+        <rect x="13" y="13" width="22" height="22" rx="1" style="--dash-len:90"/>
+        <circle cx="24" cy="24" r="4" style="--dash-len:26"/>
+      </svg>`,
+      clock: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="18" style="--dash-len:114"/>
+        <line x1="24" y1="24" x2="24" y2="12" style="--dash-len:14"/>
+        <line x1="24" y1="24" x2="33" y2="29" style="--dash-len:12"/>
+      </svg>`,
+      diamond: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="24,4 44,24 24,44 4,24 24,4" style="--dash-len:115"/>
+        <polyline points="24,4 24,44"  style="--dash-len:40"/>
+        <polyline points="4,24 44,24"  style="--dash-len:40"/>
+        <polyline points="14,14 34,34" style="--dash-len:30"/>
+        <polyline points="34,14 14,34" style="--dash-len:30"/>
+      </svg>`,
+      pen: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="8,40 16,32 32,16 38,10" style="--dash-len:60"/>
+        <polyline points="38,10 42,6 42,10 38,10" style="--dash-len:20"/>
+        <polyline points="16,32 8,40 12,40 16,36" style="--dash-len:20"/>
+        <line x1="26" y1="10" x2="38" y2="22" style="--dash-len:20"/>
+      </svg>`,
+    };
+
+    c.items.forEach((item, idx) => {
+      const st   = el('div', 'stat');
+      st.dataset.target = item.value;
+      st.dataset.delay  = idx * 150;
+      const iconWrap = el('div', 'stat-icon');
+      iconWrap.innerHTML = ICONS[item.icon] || ICONS.diamond;
+      st.appendChild(iconWrap);
+      const num = el('h4', '', '0');
+      num.dataset.countTo = item.value;
+      st.appendChild(num);
+      st.appendChild(el('p', '', item.label));
+      sr.appendChild(st);
+    });
+
+    appendSection(makeTextBlock([tc, sr], c.showChapter, c.chapter));
+  }
+
+  /* ── Panels ── */
+  const P = CONFIG.panels || {};
+
+  if (P.badgeSheet) {
+    const s = el('section', 'panel-section');
+    const i = el('div', 'section-inner text-block rn-panel');
+    i.innerHTML = `
+      <span class="panel-label">Full Colour</span>
+      <h2 class="panel-heading">Royal Navy<br>Officers Cap Badge</h2>
+      <p class="panel-body">
+        The fouled anchor — a navigational anchor entangled with its own rope — has been the
+        central device of Royal Navy officer insignia since the eighteenth century. Redrawn
+        entirely from reference, rebuilt as clean vector in Illustrator, then rendered with
+        gilded metal materials.
+      </p>
+      <div class="rn-badge-primary">
+        <img src="images/RNOfficerbadge.png" alt="Royal Navy Officers Cap Badge — full colour" loading="lazy">
+      </div>
+      <hr class="panel-rule">
+      <span class="rn-symmetry-label">Symmetry</span>
+      <span class="rn-symmetry-caption">
+        The open laurel wreath form — showing the full radial spread of the device.
+      </span>
+      <div class="rn-badge-secondary">
+        <img src="images/RN_POBadge.png" alt="Royal Navy Officers Cap Badge — closed wreath" loading="lazy">
+      </div>
+      <br><br>
+      <span class="rn-symmetry-caption">
+        The re-designed Chief Petty Officers Cap Badge device.
+      </span>
+    `;
+    s.appendChild(i); main.appendChild(s);
+  }
+
+  if (P.sbsVariants) {
+    const s = el('section', 'panel-section');
+    const i = el('div', 'section-inner text-block sbs-panel');
+    i.innerHTML = `
+      <span class="panel-label">Full Colour</span>
+      <h2 class="panel-heading">Badge Variants</h2>
+      <div class="sbs-image-wrap">
+        <img src="images/SBS_Badges.webp" alt="SBS badge variants — olive drab, full colour, line work" loading="lazy">
+      </div>
+      <div class="sbs-captions">
+        <div class="sbs-caption-col">
+          <span class="sbs-caption-col__label">Olive Drab</span>
+          <p class="sbs-caption-col__text">Subdued field version</p>
+        </div>
+        <div class="sbs-caption-col">
+          <span class="sbs-caption-col__label">Full Colour</span>
+          <p class="sbs-caption-col__text">Dress uniform version</p>
+        </div>
+        <div class="sbs-caption-col">
+          <span class="sbs-caption-col__label">Line Work</span>
+          <p class="sbs-caption-col__text">Technical drawing version</p>
+        </div>
+      </div>
+    `;
+    s.appendChild(i); main.appendChild(s);
+  }
+
+  if (P.hqComfor) {
+    const s = el('section', 'panel-section');
+    const i = el('div', 'section-inner text-block hq-panel');
+    i.innerHTML = `
+      <div class="hq-intro">
+        <div class="hq-intro-text">
+          <span class="panel-label">Full Colour</span>
+          <h2 class="panel-heading">HQ Commando<br>Forces</h2>
+          <p class="panel-body">
+            Commissioned whilst working at the MOD embedded with the Royal Navy and based on an existing Commando Strike Force badge, this project involved research into the history of the unit and its insignia.
+            The brief called for a new badge for HQ Commando Forces, unifying the
+            lightning bolt, commando dagger and naval trident beneath the King's Crown.
+          </p>
+        </div>
+        <div class="hq-intro-badge">
+          <img src="images/badge-hq.png" alt="HQ Commando Forces badge" loading="lazy">
+        </div>
+      </div>
+      <div class="hq-components">
+        <h3 class="hq-section-heading">Components</h3>
+        <div class="hq-row">
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/component-lightning.png" alt="Lightning" loading="lazy"></div><span class="hq-item__label">Lightning</span></div>
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/component-dagger.png" alt="Commando Dagger" loading="lazy"></div><span class="hq-item__label">Commando Dagger</span></div>
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/component-trident.png" alt="Trident" loading="lazy"></div><span class="hq-item__label">Trident</span></div>
+        </div>
+      </div>
+      <div class="hq-colourways">
+        <h3 class="hq-section-heading">Shield Colour Ways</h3>
+        <div class="hq-row">
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/shield-colourway-1.png" alt="Shield colourway 1" loading="lazy"></div><span class="hq-item__label">Full Colour</span></div>
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/shield-colourway-2.png" alt="Shield colourway 2" loading="lazy"></div><span class="hq-item__label">Full Colour</span></div>
+          <div class="hq-item"><div class="hq-item__image-wrap"><img src="images/shield-colourway-3.png" alt="Shield colourway 3" loading="lazy"></div><span class="hq-item__label">Full Colour</span></div>
+        </div>
+      </div>
+      <div class="hq-palette">
+        <div class="hq-palette__dots">
+          <span class="palette-dot dot-1"></span>
+          <span class="palette-dot dot-2"></span>
+          <span class="palette-dot dot-3"></span>
+          <span class="palette-dot dot-4"></span>
+        </div>
+        <span class="hq-palette__label">Colour Palette</span>
+      </div>
+    `;
+    s.appendChild(i); main.appendChild(s);
+  }
+
+  if (P.software) {
+    const c = CONFIG.content.software || {};
+    const logos = c.logos || [
+      { src: "images/AdobeLogo.png",  name: "" },
+      { src: "images/Luma Logo.png",  name: "" },
+      { src: "images/GeminiLogo.png", name: "" },
+      { src: "images/ClaudeLogo.png", name: "" },
+    ];
+    const caption = c.caption || "Vector work produced in Adobe Illustrator. 3D renders generated with Luma AI. Research assisted by Claude.";
+
+    const s = el('section', 'panel-section');
+    const i = el('div', 'section-inner text-block sw-panel');
+    const logoHTML = logos.map(l =>
+      `<div class="sw-logo">
+        <img class="sw-logo__icon" src="${l.src}" alt="${l.name}">
+        <span class="sw-logo__name">${l.name}</span>
+      </div>`
+    ).join('');
+    i.innerHTML = `
+      <span class="sw-panel__label">Software / Apps</span>
+      <div class="sw-panel__logos">${logoHTML}</div>
+      <p class="sw-panel__caption">${caption}</p>
+    `;
+    s.appendChild(i); main.appendChild(s);
+  }
+
+  /* Footer */
+  const footer = el('footer');
+  const btt = document.createElement('button');
+  btt.id = 'back-to-top';
+  btt.setAttribute('aria-label', 'Back to top');
+  btt.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>`;
+  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  footer.appendChild(btt);
+  footer.appendChild(el('span', 'footer-wordmark', CONFIG.wordmark));
+  footer.appendChild(el('p', '', CONFIG.footerCaption));
+  main.appendChild(footer);
+
+  /* ══════════════════════════════════════════════════════
+     SCROLL + VIDEO
+     rAF-batched seek: one write per animation frame max.
+     Direct currentTime assignment works in all browsers
+     including Safari. fastSeek() is excluded — it causes
+     Safari to drop to keyframe-only seeking which breaks
+     smooth scrubbing on short videos.
+  ══════════════════════════════════════════════════════ */
+  const video       = document.getElementById('bg-video');
+  const progressBar = document.getElementById('progress-bar');
+  const scrollCue   = document.getElementById('scroll-cue');
+  const pct         = document.getElementById('progress-pct');
+  const loading     = document.getElementById('loading');
+  const hudBar      = document.getElementById('hud-bar');
+
+  video.addEventListener('loadedmetadata', () => loading.classList.add('hidden'));
+  if (video.readyState >= 1) loading.classList.add('hidden');
+  setTimeout(() => loading.classList.add('hidden'), 3000);
+
+  let rafPending   = false;
+  let targetTime   = 0;
+  let lastProgress = -1;
+
+  function applyVideoSeek() {
+    rafPending = false;
+    if (!video.duration || !isFinite(video.duration)) return;
+    /* Only seek if delta is meaningful — avoids micro-jitter */
+    if (Math.abs(video.currentTime - targetTime) > 0.04) {
+      video.currentTime = targetTime;
+    }
+  }
+
+  function onScroll() {
+    const scrollTop = window.scrollY;
+    const scrollMax = document.body.scrollHeight - window.innerHeight;
+    const progress  = Math.min(Math.max(scrollTop / scrollMax, 0), 1);
+
+    if (video.duration && isFinite(video.duration) && video.offsetParent !== null) {
+      targetTime = progress * video.duration;
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(applyVideoSeek);
+      }
+    }
+
+    if (progress !== lastProgress) {
+      video.style.opacity = 1 - (progress * 0.9);
+      progressBar.style.width = (progress * 100) + '%';
+      pct.textContent = Math.round(progress * 100) + '%';
+      lastProgress = progress;
+    }
+
+    scrollCue.style.opacity = scrollTop > 40 ? '0' : '1';
+    hudBar.classList.toggle('scrolled', scrollTop > 40);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ── Lightbox ── */
+  const lb      = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lightbox-img');
+  const lbDots  = document.getElementById('lightbox-dots');
+  let current   = 0;
+
+  function getItems() { return Array.from(document.querySelectorAll('.gallery-item')); }
+
+  function buildDots(count) {
+    lbDots.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const d = document.createElement('span');
+      d.className = 'lb-dot' + (i === current ? ' active' : '');
+      d.addEventListener('click', () => showSlide(i));
+      lbDots.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    Array.from(lbDots.children).forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function openLightbox(i) {
+    const items = getItems();
+    current = i;
+    lbImg.src = items[i].querySelector('img').src;
+    buildDots(items.length);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function showSlide(i) {
+    const items = getItems();
+    current = (i + items.length) % items.length;
+    lbImg.src = items[current].querySelector('img').src;
+    updateDots();
+  }
+
+  document.addEventListener('click', e => {
+    const item = e.target.closest('.gallery-item');
+    if (item) openLightbox(+item.dataset.index);
+  });
+
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+  document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); showSlide(current - 1); });
+  document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); showSlide(current + 1); });
+
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') showSlide(current - 1);
+    if (e.key === 'ArrowRight') showSlide(current + 1);
+  });
+
+  /* ── Stat animation ── */
+  function countUp(numEl, target, duration) {
+    const isFloat = target % 1 !== 0;
+    const start   = performance.now();
+    function tick(now) {
+      const t    = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const val  = target * ease;
+      numEl.textContent = isFloat ? val.toFixed(1) : Math.round(val);
+      if (t < 1) requestAnimationFrame(tick);
+      else numEl.textContent = isFloat ? target.toFixed(1) : target;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const st    = entry.target;
+      const delay = +st.dataset.delay || 0;
+      setTimeout(() => {
+        st.classList.add('fired');
+        const numEl  = st.querySelector('h4');
+        const target = parseFloat(numEl.dataset.countTo);
+        countUp(numEl, target, 1200);
+      }, delay);
+      statObserver.unobserve(st);
+    });
+  }, { threshold: 0.3 });
+
+  /* ── Scroll reveal ── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll(
+      '.text-block, .ti-image img, .fullbleed-wrap img, .step-image img, .gallery-item, .timeline-content, .pull-quote'
+    ).forEach(el => {
+      el.classList.add('reveal');
+      revealObserver.observe(el);
+    });
+    document.querySelectorAll('.stat').forEach(st => statObserver.observe(st));
+
+    /* Panel image + logo reveals */
+    document.querySelectorAll('.panel-section img, .sw-logo').forEach((el, i) => {
+      el.style.transitionDelay = (i % 4 * 0.12) + 's';
+      el.classList.add('reveal');
+      revealObserver.observe(el);
+    });
+  });
+
+  /* ── Hamburger / mobile menu ── */
+  const hamburger    = document.getElementById('hamburger');
+  const mobileMenu   = document.getElementById('mobile-menu');
+  const menuClose    = document.getElementById('mobile-menu-close');
+  const menuNav      = document.getElementById('mobile-menu-nav');
+
+  /* Build mobile nav from CONFIG */
+  const mLinks = [];
+  if (CONFIG.nav.prev && CONFIG.nav.prev.url)
+    mLinks.push({ label: '← ' + CONFIG.nav.prev.label, url: CONFIG.nav.prev.url });
+  if (CONFIG.nav.index)
+    mLinks.push({ label: 'All Work', url: CONFIG.nav.index });
+  if (CONFIG.nav.next && CONFIG.nav.next.url)
+    mLinks.push({ label: CONFIG.nav.next.label + ' →', url: CONFIG.nav.next.url });
+
+  mLinks.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.url;
+    a.textContent = link.label;
+    a.addEventListener('click', closeMenu);
+    menuNav.appendChild(a);
+  });
+
+  function openMenu() { mobileMenu.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMenu() { mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+
+  if (hamburger) hamburger.addEventListener('click', openMenu);
+  if (menuClose) menuClose.addEventListener('click', closeMenu);
+  mobileMenu.addEventListener('click', e => { if (e.target === mobileMenu) closeMenu(); });
+  </script>
+
+</body>
+</html>

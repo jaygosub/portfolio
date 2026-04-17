@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Snippets v3 — Jason Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:    #08080c;
+    --cream: #f5f0e8;
+    --gold:  #c8a96e;
+    --rule:  rgba(200,169,110,0.18);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    padding: 80px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* demo labels — not part of snippets */
+  .demo-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(200,169,110,0.35);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+
+  /* ================================================================
+     SHARED PANEL STYLES
+     Add this block once to your project page <style> tag.
+     All four panels use these common rules.
+  ================================================================ */
+
+  .panel-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .panel-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--cream);
+  }
+
+  .panel-body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    color: rgba(245,240,232,0.68);
+  }
+
+  .panel-rule {
+    border: none;
+    border-top: 1px solid rgba(245,240,232,0.12);
+    margin: 48px 0;
+  }
+
+
+  /* ================================================================
+     PANEL A — ROYAL NAVY BADGE SHEET
+     Single column, portrait.
+     label → heading → body → large badge centred →
+     rule → SYMMETRY label centred → caption centred →
+     second smaller badge centred
+  ================================================================ */
+
+  .rn-panel {
+    width: 100%;
+    background: transparent;
+    padding: 56px 0 64px;
+  }
+
+  .rn-panel .panel-heading {
+    font-size: clamp(44px, 6vw, 76px);
+    margin-bottom: 28px;
+  }
+
+  .rn-panel .panel-body {
+    font-size: 14px;
+    max-width: 68ch;
+    margin-bottom: 64px;
+  }
+
+  /* Large hero badge — centred, generous width */
+  .rn-badge-primary {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px;
+  }
+
+  .rn-badge-primary img {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: block;
+  }
+
+  /* SYMMETRY block — centred */
+  .rn-symmetry-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    text-align: center;
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .rn-symmetry-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.5);
+    text-align: center;
+    display: block;
+    margin-bottom: 52px;
+  }
+
+  /* Second badge — smaller, centred */
+  .rn-badge-secondary {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 120px;
+  }
+
+  .rn-badge-secondary img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    display: block;
+  }
+
+
+  /* ================================================================
+     PANEL B — SBS BADGE VARIANTS
+     Single full-width image spanning the panel.
+     Below: three equal columns, each with a gold spaced label
+     and a DM Sans caption. Text aligns beneath each third of
+     the image where its respective shield sits.
+  ================================================================ */
+
+  .sbs-panel {
+    width: 100%;
+    background: transparent;
+    padding: 56px 0 60px;
+  }
+
+  .sbs-panel .panel-heading {
+    font-size: clamp(48px, 6.5vw, 84px);
+    margin-bottom: 52px;
+  }
+
+  /* Full-width single image — the composite of all three shields */
+  .sbs-image-wrap {
+    width: 100%;
+    margin-bottom: 36px;
+  }
+
+  .sbs-image-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Three-column text block beneath the image */
+  .sbs-captions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    width: 100%;
+  }
+
+  .sbs-caption-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  .sbs-caption-col__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  .sbs-caption-col__text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.5);
+    text-align: center;
+    line-height: 1.55;
+  }
+
+
+  /* ================================================================
+     PANEL C — HQCOMFOR (unchanged from v2 — already correct)
+  ================================================================ */
+
+  .hq-panel {
+    width: 100%;
+    background: transparent;
+    padding: 56px 0 64px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hq-panel__intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 72px;
+  }
+
+  .hq-panel__intro-text { display: flex; flex-direction: column; }
+
+  .hq-panel__intro-text .panel-heading {
+    font-size: clamp(38px, 5vw, 64px);
+    margin-bottom: 24px;
+  }
+
+  .hq-panel__intro-text .panel-body { font-size: 13px; }
+
+  .hq-panel__intro-badge {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .hq-panel__intro-badge img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+  }
+
+  .hq-section-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hq-components { margin-bottom: 72px; }
+
+  .hq-components__row,
+  .hq-colourways__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hq-component,
+  .hq-colourway {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hq-component__image-wrap {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .hq-component__image-wrap img {
+    max-height: 180px;
+    max-width: 90px;
+    width: auto;
+    height: auto;
+    display: block;
+  }
+
+  .hq-colourway__image-wrap {
+    height: 175px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  .hq-colourway__image-wrap img {
+    max-height: 155px;
+    max-width: 155px;
+    width: auto;
+    height: auto;
+    display: block;
+  }
+
+  .hq-item-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.48);
+    text-align: center;
+  }
+
+  .hq-colourways { margin-bottom: 52px; }
+
+  .hq-palette {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hq-palette__dots { display: flex; gap: 10px; }
+
+  .palette-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: block;
+  }
+
+  /* Edit these to match your actual palette */
+  .dot-1 { background: #e05a38; }
+  .dot-2 { background: #2e7d4e; }
+  .dot-3 { background: #3d5faa; }
+  .dot-4 { background: #60b8d4; }
+
+  .hq-palette__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.32);
+  }
+
+
+  /* ================================================================
+     PANEL D — SOFTWARE / APPS
+     Full content width (no extra padding reduction).
+     Centred label. Logos in a flex row, space-evenly distributed,
+     wrapping gracefully if more than 4 are added.
+     Each logo: img icon + text name side by side.
+     Centred caption below.
+  ================================================================ */
+
+  .sw-panel {
+    width: 100%;
+    background: transparent;
+    padding: 52px 0 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .sw-panel__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* Logos row — space-evenly so they spread across full width.
+     Wraps cleanly if you add more logos. */
+  .sw-panel__logos {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 32px 0;
+  }
+
+  /* Each logo: icon image + wordmark text */
+  .sw-logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  /* Logo icon — sized to match text cap height (~28px).
+     Apply filter: brightness(0) invert(1) if your SVG is dark.
+     Remove filter if already white/light. */
+  .sw-logo__icon {
+    height: 28px;
+    width: auto;
+    display: block;
+    filter: brightness(0) invert(1);
+    opacity: 0.88;
+  }
+
+  /* Wordmark — DM Sans regular, cream, ~22px matching reference */
+  .sw-logo__name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--cream);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    opacity: 0.88;
+  }
+
+  /* Caption */
+  .sw-panel__caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.42);
+    text-align: center;
+    max-width: 72ch;
+    line-height: 1.65;
+  }
+
+</style>
+</head>
+<body>
+
+
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  HOW TO HOOK INTO CONFIG                                         ║
+║                                                                  ║
+║  In each project's CONFIG block, add a panels object:           ║
+║                                                                  ║
+║  const CONFIG = {                                                ║
+║    ...                                                           ║
+║    panels: {                                                     ║
+║      badgeSheet:  true,   // Panel A — RN only                  ║
+║      sbsVariants: false,  // Panel B — SBS only                 ║
+║      hqComfor:    false,  // Panel C — HQCOMFOR only            ║
+║      software:    true,   // Panel D — toggle per page          ║
+║    },                                                            ║
+║  };                                                              ║
+║                                                                  ║
+║  Then in your render/init JS, after sections are built:         ║
+║                                                                  ║
+║  if (!CONFIG.panels.badgeSheet)                                  ║
+║    document.getElementById('panel-badge-sheet').style.display   ║
+║      = 'none';                                                   ║
+║                                                                  ║
+║  (Repeat for each panel id.)                                     ║
+║                                                                  ║
+║  Or use the helper at the bottom of this file — paste it        ║
+║  into your existing init/render function.                        ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL A — ROYAL NAVY BADGE SHEET
+     Copy into: royal-navy/index.html
+     Images in: royal-navy/images/
+       badge-primary.png   — large badge (open laurel, full colour)
+       badge-secondary.png — smaller badge (closed wreath form)
+     CONFIG: panels.badgeSheet: true/false
+══════════════════════════════════════════════════════════════ -->
+<span class="demo-tag">Panel A — Royal Navy</span>
+
+<div class="rn-panel" id="panel-badge-sheet">
+
+  <span class="panel-label">Full Colour</span>
+
+  <h2 class="panel-heading">Royal Navy<br>Officers Cap Badge</h2>
+
+  <p class="panel-body">
+    The fouled anchor — a navigational anchor entangled with its own rope — has been the central 
+    device of Royal Navy officer insignia since the eighteenth century. Redrawn entirely from 
+    reference, rebuilt as clean vector in Illustrator, then rendered with gilded metal materials.
+  </p>
+
+  <!-- Large hero badge centred -->
+  <div class="rn-badge-primary">
+    <img src="images/RNOfficerBadge.png" alt="Royal Navy Officers Cap Badge — full colour, open laurel">
+  </div>
+
+  <hr class="panel-rule">
+
+  <!-- SYMMETRY heading + caption centred -->
+  <span class="rn-symmetry-label">Symmetry</span>
+  <span class="rn-symmetry-caption">
+    The open laurel wreath form — showing the full radial spread of the device.
+  </span>
+
+  <!-- Second smaller badge centred -->
+  <div class="rn-badge-secondary">
+    <img src="images/RN_POBadge.png" alt="Royal Navy Officers Cap Badge — closed wreath variant">
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL B — SBS BADGE VARIANTS
+     Copy into: sbs/index.html
+     Images in: sbs/images/
+       badges-all.png  — single composite image of all three shields
+                         (olive drab left, full colour centre, line work right)
+     CONFIG: panels.sbsVariants: true/false
+══════════════════════════════════════════════════════════════ -->
+<span class="demo-tag">Panel B — SBS</span>
+
+<div class="sbs-panel" id="panel-sbs-variants">
+
+  <span class="panel-label">Full Colour</span>
+  <h2 class="panel-heading">Special Boat<br>Service</h2>
+
+  <!-- Single full-width composite image of all three shields -->
+  <div class="sbs-image-wrap">
+    <img src="images/SBS_Badges.png" alt="SBS badge variants — olive drab, full colour, line work">
+  </div>
+
+  <!-- Three columns of text beneath, aligned to each shield -->
+  <div class="sbs-captions">
+
+    <div class="sbs-caption-col">
+      <span class="sbs-caption-col__label">Olive Drab</span>
+      <p class="sbs-caption-col__text">Lorem ipsum dolor sit amet</p>
+    </div>
+
+    <div class="sbs-caption-col">
+      <span class="sbs-caption-col__label">Full Colour</span>
+      <p class="sbs-caption-col__text">Lorem ipsum dolor sit amet</p>
+    </div>
+
+    <div class="sbs-caption-col">
+      <span class="sbs-caption-col__label">Line Work</span>
+      <p class="sbs-caption-col__text">Lorem ipsum dolor sit amet</p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL C — HQCOMFOR
+     Copy into: hqcomfor/index.html
+     Images in: hqcomfor/images/
+       badge-hq.png             — hero badge (top right)
+       component-lightning.png  — line art
+       component-dagger.png     — line art
+       component-trident.png    — line art
+       shield-colourway-1.png   — shield A
+       shield-colourway-2.png   — shield B
+       shield-colourway-3.png   — shield C
+     CONFIG: panels.hqComfor: true/false
+══════════════════════════════════════════════════════════════ -->
+<span class="demo-tag">Panel C — HQCOMFOR</span>
+
+<div class="hq-panel" id="panel-hq-comfor">
+
+  <!-- Intro: text left, badge right -->
+  <div class="hq-panel__intro">
+    <div class="hq-panel__intro-text">
+      <span class="panel-label">Full Colour</span>
+      <h2 class="panel-heading">HQ Commando<br>Forces</h2>
+      <p class="panel-body">
+        Commissioned whilst working at the MOD embedded with the Royal Navy. 
+        The brief called for a new badge for HQ Commando Forces — unifying the 
+        lightning bolt, commando dagger and naval trident beneath the King's Crown.
+      </p>
+    </div>
+    <div class="hq-panel__intro-badge">
+      <img src="images/HQCOMFORbadge.png" alt="HQ Commando Forces badge">
+    </div>
+  </div>
+
+  <!-- Components -->
+  <div class="hq-components">
+    <h3 class="hq-section-heading">Components</h3>
+    <div class="hq-components__row">
+      <div class="hq-component">
+        <div class="hq-component__image-wrap">
+          <img src="images/SBS_Lightning.png" alt="Lightning bolt">
+        </div>
+        <span class="hq-item-label">Lightning</span>
+      </div>
+      <div class="hq-component">
+        <div class="hq-component__image-wrap">
+          <img src="images/SBS_Dagger.png" alt="Commando dagger">
+        </div>
+        <span class="hq-item-label">Commando Dagger</span>
+      </div>
+      <div class="hq-component">
+        <div class="hq-component__image-wrap">
+          <img src="images/SBS_Trident.png" alt="Trident">
+        </div>
+        <span class="hq-item-label">Trident</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shield Colour Ways -->
+  <div class="hq-colourways">
+    <h3 class="hq-section-heading">Shield Colour Ways</h3>
+    <div class="hq-colourways__row">
+      <div class="hq-colourway">
+        <div class="hq-colourway__image-wrap">
+          <img src="images/SBS_Shield1.png" alt="Shield colourway 1">
+        </div>
+        <span class="hq-item-label">Full Colour</span>
+      </div>
+      <div class="hq-colourway">
+        <div class="hq-colourway__image-wrap">
+          <img src="images/SBS_Shield2.png" alt="Shield colourway 2">
+        </div>
+        <span class="hq-item-label">Full Colour</span>
+      </div>
+      <div class="hq-colourway">
+        <div class="hq-colourway__image-wrap">
+          <img src="images/SBS_Shield3.png" alt="Shield colourway 3">
+        </div>
+        <span class="hq-item-label">Full Colour</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Colour palette dots -->
+  <div class="hq-palette">
+    <div class="hq-palette__dots">
+      <span class="palette-dot dot-1"></span>
+      <span class="palette-dot dot-2"></span>
+      <span class="palette-dot dot-3"></span>
+      <span class="palette-dot dot-4"></span>
+    </div>
+    <span class="hq-palette__label">Colour Palette</span>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL D — SOFTWARE / APPS  (ALL PAGES)
+     Copy into: every project's index.html
+     Images in: each project's images/ folder —
+       logo-adobe.svg    logo-luma.svg
+       logo-gemini.svg   logo-claude.svg
+       (add more .sw-logo items as needed — they wrap automatically)
+     Filter note: filter:brightness(0)invert(1) makes dark SVGs white.
+     Remove filter if your logos are already white/light.
+     CONFIG: panels.software: true/false
+══════════════════════════════════════════════════════════════ -->
+<span class="demo-tag">Panel D — Software / Apps</span>
+
+<div class="sw-panel" id="panel-software">
+
+  <span class="sw-panel__label">Software / Apps</span>
+
+  <div class="sw-panel__logos">
+
+    <!-- Adobe — icon mark + wordmark -->
+    <div class="sw-logo">
+      <img class="sw-logo__icon" src="images/AdobeLogo.png" alt="">
+      <span class="sw-logo__name"></span>
+    </div>
+
+    <!-- Luma AI — wordmark only (no separate icon mark) -->
+    <div class="sw-logo">
+      <img class="sw-logo__icon" src="images/Luma Logo.png" alt="">
+      <span class="sw-logo__name"></span>
+    </div>
+
+    <!-- Gemini — icon + wordmark -->
+    <div class="sw-logo">
+      <img class="sw-logo__icon" src="images/GeminiLogo.png" alt="">
+      <span class="sw-logo__name"></span>
+    </div>
+
+    <!-- Claude — icon + wordmark -->
+    <div class="sw-logo">
+      <img class="sw-logo__icon" src="images/ClaudeLogo.png" alt="">
+      <span class="sw-logo__name"></span>
+    </div>
+
+    <!-- Add more logos here as needed — they wrap automatically
+    <div class="sw-logo">
+      <img class="sw-logo__icon" src="images/logo-xxx.svg" alt="">
+      <span class="sw-logo__name">App Name</span>
+    </div>
+    -->
+
+  </div>
+
+  <p class="sw-panel__caption">
+    Vector work produced in Adobe Illustrator. 3D photorealistic renders generated 
+    with Adobe Photoshop and Luma AI. Video by Veo. Research and design iteration assisted by Gemini and Claude.
+  </p>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     CONFIG INTEGRATION — paste this into your existing
+     init / render function, after sections are built.
+     It reads CONFIG.panels and hides any panel set to false.
+══════════════════════════════════════════════════════════════ -->
+<script>
+/*
+
+// ── Paste this into your project page's existing <script> block ──
+// Place it at the end of your init() or renderSections() function.
+
+function applyPanelVisibility() {
+  const panels = CONFIG.panels || {};
+
+  const map = {
+    'panel-badge-sheet':  panels.badgeSheet,
+    'panel-sbs-variants': panels.sbsVariants,
+    'panel-hq-comfor':    panels.hqComfor,
+    'panel-software':     panels.software,
+  };
+
+  Object.entries(map).forEach(([id, enabled]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = enabled ? '' : 'none';
+  });
+}
+
+applyPanelVisibility();
+
+
+// ── Then in each project's CONFIG block, add: ──
+
+const CONFIG = {
+  // ... your existing config ...
+
+  panels: {
+    badgeSheet:  true,    // Panel A — set true on royal-navy only
+    sbsVariants: false,   // Panel B — set true on sbs only
+    hqComfor:    false,   // Panel C — set true on hqcomfor only
+    software:    true,    // Panel D — true on all pages
+  },
+};
+
+*/
+</script>
+
+
+</body>
+</html>
