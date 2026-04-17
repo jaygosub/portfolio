@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROJECT TITLE — Jason Stone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --bg:        #231F20;
+  --fg:        #FFFFFF;
+  --fg-muted:  rgba(255,255,255,0.42);
+  --menu-bg:   rgba(18,15,16,0.72);
+  --menu-fg:   #FFFFFF;
+  --nav-bg:    rgba(35,31,32,0.92);
+  --ease:      cubic-bezier(0.22,1,0.36,1);
+  --pad-x:     64px;
+}
+[data-theme="light"] {
+  --bg:        #FFFFFF;
+  --fg:        #231F20;
+  --fg-muted:  rgba(35,31,32,0.42);
+  --menu-bg:   rgba(242,240,238,0.72);
+  --menu-fg:   #231F20;
+  --nav-bg:    rgba(255,255,255,0.92);
+}
+/* ─── RESET ──────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:'Inter',sans-serif;
+  transition:background .35s var(--ease),color .35s var(--ease);
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* ─── NAV ─────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:var(--nav-bg);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--pad-x);height:58px;
+  border-bottom:1px solid rgba(128,128,128,0.10);
+  transition:background .35s var(--ease);
+}
+.nav-logo{
+  font-family:'Inter Tight',sans-serif;font-weight:600;
+  font-size:18px;letter-spacing:-0.02em;
+  color:var(--fg);transition:color .35s;
+}
+.nav-right{display:flex;align-items:center;gap:20px}
+.theme-toggles{display:flex;gap:10px;align-items:center}
+.toggle-dot{
+  width:15px;height:15px;border-radius:50%;
+  border:2px solid var(--fg);cursor:pointer;
+  background:transparent;
+  transition:background .22s,border-color .22s;
+}
+[data-theme="dark"]  .toggle-dot.dark-dot  { background:var(--fg); }
+[data-theme="light"] .toggle-dot.light-dot { background:var(--fg); }
+.hamburger{
+  width:26px;height:18px;position:relative;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:none;border:none;outline:none;padding:0;
+  z-index:201;
+}
+.hamburger .bar{
+  display:block;height:2px;width:100%;
+  background:var(--fg);border-radius:2px;
+  transition:transform .4s var(--ease),opacity .28s,background .35s;
+  transform-origin:50% 50%;
+  will-change:transform;
+}
+.hamburger.is-open .bar:nth-child(1){ transform:translateY(8px) rotate(45deg); }
+.hamburger.is-open .bar:nth-child(2){ opacity:0;transform:scaleX(0); }
+.hamburger.is-open .bar:nth-child(3){ transform:translateY(-8px) rotate(-45deg); }
+
+/* ─── MENU OVERLAY ────────────────────────────────────── */
+.menu-overlay{
+  position:fixed;inset:0;z-index:190;
+  background:var(--menu-bg);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s var(--ease);
+}
+.menu-overlay.is-open{opacity:1;pointer-events:all}
+.menu-list{list-style:none;text-align:center}
+.menu-list li{overflow:hidden}
+.menu-list a{
+  display:block;
+  font-family:'Inter Tight',sans-serif;font-weight:700;
+  font-size:clamp(40px,9vw,80px);
+  letter-spacing:-0.03em;text-transform:uppercase;
+  color:var(--menu-fg);line-height:1.08;padding:5px 0;
+  transform:translateY(110%);
+  transition:transform .52s var(--ease),opacity .4s;
+  opacity:0;
+}
+.menu-overlay.is-open .menu-list a{transform:translateY(0);opacity:1}
+.menu-overlay.is-open .menu-list li:nth-child(1) a{transition-delay:.06s}
+.menu-overlay.is-open .menu-list li:nth-child(2) a{transition-delay:.12s}
+.menu-overlay.is-open .menu-list li:nth-child(3) a{transition-delay:.18s}
+.menu-overlay.is-open .menu-list li:nth-child(4) a{transition-delay:.24s}
+.menu-list a:hover{opacity:.32}
+
+/* ─── HERO ────────────────────────────────────────────── */
+.hero{
+  position:relative;width:100%;
+  height:80vh;min-height:480px;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.hero-image{position:absolute;inset:0}
+.hero-image img{width:100%;height:100%;object-fit:cover}
+.hero-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom, rgba(35,31,32,0) 0%, rgba(35,31,32,0.82) 68%, #231F20 100%);
+  z-index:1;
+}
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 var(--pad-x) 52px;width:100%;
+}
+.hero-cat{
+  font-family:'Inter',sans-serif;font-weight:500;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-bottom:8px;
+}
+.hero-title{
+  font-family:'Inter Tight',sans-serif;font-weight:700;
+  font-size:clamp(52px,10vw,128px);letter-spacing:-.02em;
+  color:#FFFFFF;line-height:.95;
+}
+
+/* ─── CONTENT SHARED ──────────────────────────────────── */
+.section{padding:80px var(--pad-x)}
+.section-divider{width:100%;height:1px;background:rgba(128,128,128,0.10)}
+
+/* ─── PULL QUOTE ──────────────────────────────────────── */
+.pull-quote{
+  padding:80px var(--pad-x);text-align:center;
+}
+.pull-quote blockquote{
+  font-family:'Inter Tight',sans-serif;font-weight:600;
+  font-size:clamp(20px,3.6vw,36px);
+  letter-spacing:-0.02em;line-height:1.32;
+  color:var(--fg);max-width:820px;margin:0 auto 22px;
+  transition:color .35s;
+}
+.pull-quote cite{
+  font-family:'Inter Tight',sans-serif;font-weight:400;
+  font-size:10px;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--fg-muted);font-style:normal;
+}
+
+/* ─── TWO-COL ─────────────────────────────────────────── */
+.two-col{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;align-items:stretch;
+}
+.col-text{
+  padding:60px var(--pad-x);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.col-image{position:relative;min-height:480px;overflow:hidden}
+.col-image img{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
+}
+.section-label{
+  font-family:'Inter',sans-serif;font-size:10px;
+  letter-spacing:.20em;text-transform:uppercase;
+  color:var(--fg-muted);margin-bottom:14px;
+}
+.col-text h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,58px);letter-spacing:.03em;
+  color:var(--fg);line-height:1;margin-bottom:18px;transition:color .35s;
+}
+.col-text p{
+  font-family:'Inter',sans-serif;font-size:15px;
+  line-height:1.76;color:var(--fg-muted);transition:color .35s;
+}
+.col-text p+p{margin-top:14px}
+
+/* ─── FULL BLEED IMAGE ────────────────────────────────── */
+.fullbleed{
+  position:relative;width:100%;
+  height:60vh;min-height:380px;overflow:hidden;
+}
+.fullbleed img{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
+}
+.fullbleed-caption{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:18px var(--pad-x);
+  background:linear-gradient(to top,rgba(35,31,32,.82),transparent);
+  z-index:1;
+}
+.fullbleed-caption span{
+  font-family:'Inter Tight',sans-serif;font-weight:500;
+  font-size:10px;letter-spacing:.20em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);
+}
+
+/* ─── VIDEO SECTIONS ──────────────────────────────────────
+   Two display modes: landscape (16:9 / 4:3) and portrait (9:16)
+
+   Landscape: video spans full content width, constrained by
+              aspect-ratio so it never distorts.
+   Portrait:  video is centred in a column, flanked by optional
+              text panels. Max height is viewport to avoid giant
+              blocks on wide screens.
+──────────────────────────────────────────────────────────── */
+
+/* -- Landscape 4:3 container -- */
+.video-landscape{
+  width:70%;
+  padding:0 var(--pad-x) 80px;
+}
+.video-landscape .video-label{
+  font-family:'Inter',sans-serif;font-size:10px;
+  letter-spacing:.20em;text-transform:uppercase;
+  color:var(--fg-muted);margin-bottom:16px;
+}
+.video-landscape .video-wrap{
+  position:relative;width:100%;
+  aspect-ratio:16/9;          /* ← change to 16/9 for widescreen */
+  background:#000;overflow:hidden;
+  border-radius:16px;
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.08), 0 24px 64px rgba(0,0,0,.6);
+}
+.video-landscape video,
+.video-landscape iframe{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit: cover; /* cover may crop, fill may distort — choose per video */
+  border:none;
+}
+/* Optional caption below */
+.video-landscape .video-caption{
+  font-family:'Inter Tight',sans-serif;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--fg-muted);margin-top:14px;text-align:right;
+}
+
+/* -- Portrait 9:16: centred column layout -- */
+.video-portrait-section{
+  padding:80px var(--pad-x);
+  display:flex;align-items:center;gap:0;
+}
+/* Text panel (optional) */
+.video-portrait-text{
+  flex:1;padding-right:52px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.video-portrait-text .section-label{margin-bottom:14px}
+.video-portrait-text h2{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,4vw,52px);letter-spacing:.03em;
+  color:var(--fg);line-height:1;margin-bottom:18px;transition:color .35s;
+}
+.video-portrait-text p{
+  font-family:'Inter',sans-serif;font-size:15px;
+  line-height:1.76;color:var(--fg-muted);
+}
+/* Portrait video column */
+.video-portrait-wrap{
+  flex-shrink:0;
+  width:min(300px, 38vw);   /* phone-sized column, scales with viewport */
+  max-height:80vh;
+  position:relative;
+  aspect-ratio:9/16;
+  background:#000;overflow:hidden;
+  border-radius:16px;        /* device-frame feel */
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.08), 0 24px 64px rgba(0,0,0,.6);
+}
+.video-portrait-wrap video,
+.video-portrait-wrap iframe{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
+  border:none;
+}
+/* If no text, centre the portrait block */
+.video-portrait-section.centered{
+  justify-content:center;
+}
+.video-portrait-section.centered .video-portrait-wrap{
+  width:min(340px,42vw);
+}
+
+/* ─── CTA ─────────────────────────────────────────────── */
+.cta-section{
+  padding:100px var(--pad-x);text-align:center;
+  border-top:1px solid rgba(128,128,128,0.12);
+}
+.cta-strap{
+  font-family:'Inter',sans-serif;font-weight:500;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--fg-muted);margin-bottom:14px;
+}
+.cta-title{
+  font-family:'Inter Tight',sans-serif;font-weight: 600;
+  font-size:clamp(48px,10vw,56px);letter-spacing:.02em;
+  text-transform:none;color:var(--fg);
+  line-height:1;margin-bottom:36px;transition:color .35s;
+}
+/* Shared button */
+/* ── FAB-style pill button ──────────────────────────────
+   Resting: filled circle showing only the icon.
+   Hover:   pill expands rightward to reveal the label.
+──────────────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:0;
+  font-family:'Inter Tight',sans-serif;font-weight:600;
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  width:52px;height:52px;padding:0;
+  border-radius:100px;border:none;
+  color:var(--bg);background:var(--fg);
+  cursor:pointer;
+  /* NO overflow:hidden — breaks label animation */
+  white-space:nowrap;
+  transition:
+    width .44s var(--ease),
+    gap .40s var(--ease),
+    padding .40s var(--ease),
+    box-shadow .25s;
+  text-decoration:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.22);
+}
+.btn:hover{
+  width:210px;gap:10px;padding:0 26px 0 20px;
+  box-shadow:0 6px 28px rgba(0,0,0,0.32);
+}
+.btn-label{
+  display:inline-block;
+  overflow:hidden;
+  width:0;
+  opacity:0;
+  transition:width .40s var(--ease), opacity .28s .10s;
+  white-space:nowrap;
+}
+.btn:hover .btn-label{width:130px;opacity:1}
+.btn-icon{
+  width:18px;height:18px;
+  stroke:currentColor;fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  flex-shrink:0;transition:transform .35s var(--ease);
+}
+.btn:hover .btn-icon{transform:scale(0.9)}
+
+/* ─── FOOTER ──────────────────────────────────────────── */
+footer{
+  padding:56px var(--pad-x) 36px;
+  border-top:1px solid rgba(128,128,128,0.12);
+}
+.footer-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.footer-logo {
+  height: 24px;
+  width: auto;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.footer-logo:hover {
+  opacity: 1;
+}
+
+/* white PNGs stay as-is in dark mode */
+/* invert to black for light mode */
+[data-theme="light"] .footer-logo {
+  filter: invert(1);
+}
+
+.footer-para{
+  text-align:center;font-family:'Inter',sans-serif;
+  font-size:11.5px;line-height:1.72;color:var(--fg-muted);
+  max-width:560px;margin:0 auto 28px;
+}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between}
+.footer-avatar{
+  width:34px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.footer-avatar svg{width:18px;height:18px;fill:var(--fg-muted)}
+.footer-copy{
+  font-family:'Inter Tight',sans-serif;font-size:11px;
+  letter-spacing:.13em;text-transform:uppercase;
+  color:var(--fg-muted);
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ─── Project Navigation ──────────────────────────────────────── */
+.proj-foot-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 1.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.proj-foot-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 28px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.proj-foot-btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.proj-foot-btn:hover .proj-foot-arrow {
+  color: var(--bg);
+}
+
+.proj-foot-arrow {
+  font-size: 13px;
+  color: var(--fg-secondary);
+  transition: color 0.2s ease;
+}
+
+.proj-foot-home {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 0 1rem;
+}
+
+.proj-foot-home:hover {
+  color: var(--fg);
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────── */
+@media(max-width:900px){:root{--pad-x:36px}}
+@media(max-width:700px){
+  :root{--pad-x:20px}
+  nav{padding:0 20px}
+  .two-col{grid-template-columns:1fr}
+  .col-image{min-height:260px;position:relative}
+  .col-image img{position:relative;inset:auto;height:260px}
+  .col-text{padding:40px 20px}
+  .video-portrait-section{flex-direction:column;gap:40px}
+  .video-portrait-text{padding-right:0}
+  .video-portrait-wrap{width:min(280px,75vw)}
+  .video-portrait-section.centered .video-portrait-wrap{width:min(280px,75vw)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../" class="nav-logo">gosub / 369</a>
+  <div class="nav-right">
+    <div class="theme-toggles">
+      <div class="toggle-dot dark-dot"  title="Dark mode"  onclick="setTheme('dark')"></div>
+      <div class="toggle-dot light-dot" title="Light mode" onclick="setTheme('light')"></div>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" onclick="closeMenu()">
+  <ul class="menu-list" onclick="event.stopPropagation()">
+    <li><a href="../../index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="../../about.html" onclick="closeMenu()">About</a></li>
+    <li><a href="../../work.html" onclick="closeMenu()">Work</a></li>
+    <li><a href="../../contact.html" onclick="closeMenu()">Contact</a></li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+═════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-image">
+    <img src=".//spec_images/Comms_slides_main-gpg.jpg" alt="Project hero">
+  </div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <p class="hero-cat">Case Study</p>
+    <h1 class="hero-title">Specsavers</h1>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     PULL QUOTE
+═════════════════════════════════════════════════════════ -->
+<section class="pull-quote">
+  <blockquote>
+    "Great people, good company"
+  </blockquote>
+  <cite>A little shortsighted when COVID hit!</cite>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     2-COL — IMAGE RIGHT
+═════════════════════════════════════════════════════════ -->
+<div class="two-col">
+  <div class="col-text">
+    <p class="section-label">The Brief</p>
+    <h2>Redesigning a regiment</h2>
+    <p>The Coldstream Guards badge carries centuries of history — the star, the motto, the Garter. The challenge was to honour that legacy while pushing the vector craft to its absolute limit.</p>
+    <p>Every element was hand-drawn in Adobe Illustrator. No live trace, no shortcuts — just anchors, handles and patience.</p>
+  </div>
+  <div class="col-image">
+    <img src=".//spec_images/Annual_Review_Image_3.jpg" alt="Vector artwork">
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     FULL BLEED IMAGE
+═════════════════════════════════════════════════════════ -->
+<div class="fullbleed">
+  <img src=".//spec_images/Leaflet_Inner_small.jpg" alt="Full bleed detail">
+  <div class="fullbleed-caption">
+    <span>Vector detail — Adobe Illustrator</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     2-COL — DOUBLE LEFT
+═════════════════════════════════════════════════════════ -->
+<div class="two-col">
+  <div class="col-image">
+    <img src=".//spec_images/Comms_slides_main-gpg.jpg" alt="3D render">
+  </div>
+  <div class="col-image">
+    <img src=".//spec_images/Leaflet_Inner_small.jpg" alt="3D render">
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     2-COL — IMAGE LEFT
+═════════════════════════════════════════════════════════ -->
+<div class="two-col">
+  <div class="col-image">
+    <img src=".//spec_images/Annual_Review_Image_3.jpg" alt="3D render">
+  </div>
+  <div class="col-text">
+    <p class="section-label">The Render</p>
+    <h2>From flat to photorealistic</h2>
+    <p>Once the vector was complete, the artwork was brought into a 3D pipeline. AI-assisted rendering breathes light and material into the flat geometry — metal, enamel, gold leaf.</p>
+    <p>The result sits somewhere between archive photography and product shot.</p>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     VIDEO — LANDSCAPE 4:3
+     Use this block for process recordings, turntables, promos.
+     Change aspect-ratio to 16/9 in the .video-wrap style
+     inline if needed per project.
+═════════════════════════════════════════════════════════ 
+<div class="video-landscape">
+  <p class="video-label">Process — Illustrator Build</p>
+  <div class="video-wrap" style="aspect-ratio:4/3">-->
+    <!--
+    ╔══════════════════════════════════════════════╗
+    ║  HOW TO ADD VIDEO                            ║
+    ║                                              ║
+    ║  LOCAL FILE (recommended):                   ║
+    ║  Place video.mp4 in this project folder,     ║
+    ║  then uncomment the line below:              ║
+    ║                                              ║ 
+    ║  <video src="images/purple2.mp4"             ║
+    ║         autoplay loop muted playsinline      ║
+    ║         controls></video>                    ║
+    ║                                              ║
+    ║  • autoplay  = starts immediately            ║
+    ║  • muted     = required for autoplay         ║
+    ║  • loop      = repeats                       ║
+    ║  • playsinline = no fullscreen on iOS        ║
+    ║  • controls  = shows play/pause bar          ║
+    ║                                              ║
+    ║  RATIO: change aspect-ratio on .video-wrap   ║
+    ║  above — 4/3 or 16/9                         ║
+    ║                                              ║
+    ║  YOUTUBE / VIMEO EMBED:                      ║
+    ║  <iframe                                     ║
+    ║    src="https://www.youtube.com/embed/ID     ║
+    ║         ?autoplay=1&mute=1&loop=1            ║
+    ║         &playlist=ID"                        ║
+    ║    allow="autoplay;fullscreen"               ║
+    ║    allowfullscreen>                          ║
+    ║  </iframe>                                   ║
+    ╚══════════════════════════════════════════════╝
+    -->
+    <!--<video src="images/purple2.mp4" autoplay loop muted playsinline controls></video>
+  </div>
+  <p class="video-caption">Illustrator build — 4 min timelapse</p>
+</div>
+<div class="section-divider"></div>-->
+
+<!-- ══════════════════════════════════════════════════════
+     VIDEO — PORTRAIT 9:16 with text panel
+     Ideal for Reels / TikTok / phone previews.
+     Remove .video-portrait-text div for centred-only layout.
+═════════════════════════════════════════════════════════ -->
+<!--<div class="video-portrait-section">
+  <div class="video-portrait-text">
+    <p class="section-label">Social Cut</p>
+    <h2>Rendered for Reels</h2>
+    <p>A vertical cut produced for Instagram and TikTok — the badge rotating in photorealistic light, scored to a short audio sting.</p>
+    <p>Rendered at 1080 × 1920, colour-graded to match the Insignia palette.</p>
+  </div>
+  <div class="video-portrait-wrap"> -->
+    
+    <!--  OPTION A — local:
+     <video src="images/purple1.mp4" controls playsinline loop muted></video>
+
+      OPTION B — embed:
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID?rel=0"
+              allow="autoplay; fullscreen" allowfullscreen></iframe>
+    -->
+    <!--
+      LOCAL: <video src="video-portrait.mp4" autoplay loop muted playsinline controls></video>
+      EMBED: <iframe src="https://www.youtube.com/embed/ID?autoplay=1&mute=1&loop=1&playlist=ID"
+                     allow="autoplay;fullscreen" allowfullscreen></iframe>
+    -->
+  <!--  <video src="images/purple1.mp4" autoplay loop muted playsinline></video>
+  </div>
+</div> -->
+
+<!-- ══════════════════════════════════════════════════════
+     FULL BLEED IMAGE 2
+═════════════════════════════════════════════════════════ -->
+<div class="fullbleed">
+  <img src="images/fullbleed-02.jpg" alt="Final render">
+  <div class="fullbleed-caption">
+    <span>Final photorealistic render — AI assisted</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PROJECT NAVIGATION
+     Links to previous/next projects and section index.
+═════════════════════════════════════════════════════════ -->
+
+
+<div class="proj-foot-nav">
+ <!-- <a href="rm_embellishment.html" class="proj-foot-btn">
+    <span class="proj-foot-arrow">←</span>
+    PREVIOUS PROJECT
+  </a> -->
+  <a href="../../work.html" class="proj-foot-home">HOME</a>
+  <!--<a href="next-project.html" class="proj-foot-btn">
+    NEXT PROJECT
+    <span class="proj-foot-arrow">→</span>
+  </a> -->
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     CTA
+═════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <p class="cta-strap">Got a project in mind?</p>
+  <h2 class="cta-title">Lets work together</h2>
+  <a class="btn" href="/cdn-cgi/l/email-protection#e48e85978b8aa4838b979186d7d2ddca878b89">
+    <!-- Untitled UI: mail-01 -->
+    <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    <span class="btn-label">Get in touch</span>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <!-- Logo row -->
+  <div class="footer-logos">
+  <img src="images/AdobeLogo.png" alt="Adobe" class="footer-logo">
+  <img src="images/LumaLogo.png" alt="Luma AI" class="footer-logo">
+  <img src="images/GeminiLogo.png" alt="Gemini" class="footer-logo">
+  <img src="images/ClaudeLogo.png" alt="Claude" class="footer-logo">
+</div>
+
+  <p class="footer-para">
+    Vector work produced in Adobe Illustrator. 3D photorealistic renders generated with Adobe Photoshop, Nano Banana and Luma AI. Video with Google Flow and Veo. Research and design iteration assisted by Gemini and Claude. No AI is utilised in Adobe Illustrator, all vectors are hand drawn.
+  </p>
+
+  <div class="footer-bottom">
+    <div class="footer-avatar">
+      <!--<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--fg-muted)">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-3.9 3.6-7 8-7s8 3.1 8 7"/>
+      </svg> -->
+      <img src="images/Asset 9.png" alt="Jason Stone">
+    </div>
+    <div class="footer-copy">
+      <span>Gosub / 369</span>
+      <span style="opacity:.3">·</span>
+      <span>© 2026 Jason Stone</span>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* Theme */
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+}
+(function(){
+  const s=localStorage.getItem('theme')||'dark';
+  document.documentElement.setAttribute('data-theme',s);
+})();
+
+
+/* Menu */
+const hamburger   = document.querySelector('.hamburger');
+const menuOverlay = document.querySelector('.menu-overlay');
+function toggleMenu(){
+  const isOpen = menuOverlay.classList.toggle('is-open');
+  hamburger.classList.toggle('is-open', isOpen);
+}
+function closeMenu(){
+  menuOverlay.classList.remove('is-open');
+  hamburger.classList.remove('is-open');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+
+/* Load More — project pages don't need this but keep stub */
+</script>
+</body>
+</html>
