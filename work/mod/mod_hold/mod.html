@@ -141,16 +141,6 @@ nav{
 .gallery-item{
   position:relative;overflow:hidden;
   aspect-ratio:1/1;cursor:pointer;display:block;
-  /* ── Scroll entrance ── */
-  opacity:0;
-  transform:translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view{
-  opacity:1;
-  transform:translateY(0);
 }
 .gallery-item img{
   width:100%;height:100%;object-fit:cover;
@@ -299,19 +289,6 @@ footer{
   display:flex;align-items:center;gap:8px;
 }
 
-
-/* ─── SCROLL ENTRANCE ANIMATIONS ─────────────────────── */
-.gallery-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
 /* hidden */
 .gallery-item.hidden{display:none}
 
@@ -354,66 +331,105 @@ footer{
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Freelance</h1>
-  <h3>A rollercoaster ride of creative challenges</h3>
+  <h1>Royal Navy</h1>
+  <h3>A far too brief stint aboard a stone frigate</h3>
 </section>
 
 <!-- GALLERY -->
 <section class="gallery-section">
   <div class="gallery-grid" id="galleryGrid">
 
-    <a class="gallery-item" href="brewing.html" style="--item-color:#4ECDC4">
-      <img src="images/project-1.jpg" alt="Hop Brewing">
+    <a class="gallery-item" href="1sl_annual_report.html" style="--item-color:#4ECDC4">
+      <img src="/work/mod/images/1sl_annual.jpg" alt="1SL Annual Report">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Presentation Design</p><p class="title">Hop Brewing</p>
+        <p class="cat">Brochure Design</p><p class="title">Annual Report</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="career_pilot.html" style="--item-color:#FF6B6B">
-      <img src="images/project-2.jpg" alt="Career Pilot">
+    <a class="gallery-item" href="dd_lits_publication.html" style="--item-color:#FF6B6B">
+      <img src="/work/mod/images/ddlits.jpg" alt="DD LITS Publication">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Identity</p><p class="title">Career Pilot</p>
+        <p class="cat">Brochure Design</p><p class="title">Royal Marines</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="rzr.html" style="--item-color:#F7B731">
-      <img src="" alt="Razors Edge">
+    <a class="gallery-item" href="dsei_nest.html" style="--item-color:#F7B731">
+      <img src="/work/mod/images/futurefleet.jpg" alt="Future Fleet">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Razors Edge</p>
+        <p class="cat">3D Modelling</p><p class="title">Future Fleet</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="isl.html" style="--item-color:#A29BFE">
-      <img src="" alt="ISL">
+    <a class="gallery-item" href="op_fortis.html" style="--item-color:#A29BFE">
+      <img src="/work/mod/images/opfortis.jpg" alt="OPFORTIS">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Brochure Design</p><p class="title">ISL</p>
+        <p class="cat">Info Graphics</p><p class="title">OPFORTIS</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="vdub.html" style="--item-color:#E17055">
-      <img src="/work/freelance/freelance_image/vdub.jpg" alt="VDUB">
+    <a class="gallery-item" href="pandt_magazine.html" style="--item-color:#FD79A8">
+      <img src="/work/mod/images/pandt.jpg" alt="People & Training">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">VDUB</p>
+        <p class="cat">Brochure Design</p><p class="title">People & Training</p>
       </div>
     </a>
 
-        <a class="gallery-item" href="academy.html" style="--item-color:#FD79A8">
-      <img src="images/project-2.jpg" alt="Academy">
+    <a class="gallery-item" href="people_gems.html" style="--item-color:#55EFC4">
+      <img src="/work/mod/images/people_gems.jpg" alt="People Gems">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Academy</p>
+        <p class="cat">Info Graphics</p><p class="title">People Gems</p>
       </div>
     </a>
 
+    <a class="gallery-item hidden" href="qe_book.html" style="--item-color:#E17055">
+      <img src="/work/mod/images/qebook.jpg" alt="Queen Elizabeth Book">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Book Design</p><p class="title">Queen Elizabeth Book</p>
+      </div>
+    </a>
+
+    <a class="gallery-item hidden" href="rig20X.html" style="--item-color:#74B9FF">
+      <img src="/work/mod/images/rig20x1.jpg" alt="RIG20X">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Branding</p><p class="title">RIG20X</p>
+      </div>
+    </a>
+
+    <a class="gallery-item hidden" href="rm_emblazonment.html" style="--item-color:#A8E063">
+      <img src="/work/mod/images/Artboard 1.jpg" alt="Emblazonment">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Heraldic Design</p><p class="title">Royal Marines Band</p>
+      </div>
+    </a>
+
+     <a class="gallery-item hidden" href="rn_embassy_book.html" style="--item-color:#A8E063">
+      <img src="/work/mod/images/admirals.jpg" alt="Admiralty House">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Brochure Design</p><p class="title">Admiralty House</p>
+      </div>
+    </a>
+
+        <a class="gallery-item hidden" href="surflot_coasters.html" style="--item-color:#A8E063">
+      <img src="/work/mod/images/surflot_coasters.jpg" alt="Surflot Coasters">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Info Graphics</p><p class="title">Surflot Coasters</p>
+      </div>
+    </a>
 
   </div>
 
-  <!--<div class="load-more-wrap">
+  <div class="load-more-wrap">
     <button class="btn" id="loadMoreBtn" onclick="loadMore()">
       <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M21 2v6h-6"/>
@@ -421,7 +437,7 @@ footer{
       </svg>
       <span class="btn-label">Load More</span>
     </button>
-  </div> -->
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -468,8 +484,8 @@ function setTheme(t){
 })();
 
 /* Menu */
-const hamburger   = document.querySelector('.hamburger');
-const menuOverlay = document.querySelector('.menu-overlay');
+const hamburger    = document.querySelector('.hamburger');
+const menuOverlay  = document.querySelector('.menu-overlay');
 
 function toggleMenu(){
   const isOpen = menuOverlay.classList.toggle('is-open');
@@ -490,22 +506,6 @@ function loadMore(){
     document.getElementById('loadMoreBtn').style.display='none';
   }
 }
-
-/* ─── Scroll entrance observer ─────────────────────────── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if(entry.isIntersecting){
-      setTimeout(() => {
-        entry.target.classList.add('in-view');
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.gallery-item:not(.hidden)').forEach(el => {
-  observer.observe(el);
-});
 </script>
 </body>
 </html>

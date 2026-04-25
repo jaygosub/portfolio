@@ -141,16 +141,6 @@ nav{
 .gallery-item{
   position:relative;overflow:hidden;
   aspect-ratio:1/1;cursor:pointer;display:block;
-  /* ── Scroll entrance ── */
-  opacity:0;
-  transform:translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view{
-  opacity:1;
-  transform:translateY(0);
 }
 .gallery-item img{
   width:100%;height:100%;object-fit:cover;
@@ -299,19 +289,6 @@ footer{
   display:flex;align-items:center;gap:8px;
 }
 
-
-/* ─── SCROLL ENTRANCE ANIMATIONS ─────────────────────── */
-.gallery-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
 /* hidden */
 .gallery-item.hidden{display:none}
 
@@ -354,59 +331,83 @@ footer{
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Freelance</h1>
-  <h3>A rollercoaster ride of creative challenges</h3>
+  <h1>Personal Work</h1>
+  <h3>It takes up room in my head and won't be quiet</h3>
 </section>
 
 <!-- GALLERY -->
 <section class="gallery-section">
   <div class="gallery-grid" id="galleryGrid">
 
-    <a class="gallery-item" href="brewing.html" style="--item-color:#4ECDC4">
-      <img src="images/project-1.jpg" alt="Hop Brewing">
+    <a class="gallery-item" href="369.html" style="--item-color:#4ECDC4">
+      <img src="/work/personal/personal_image/369.jpg" alt="369">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Presentation Design</p><p class="title">Hop Brewing</p>
+        <p class="cat">Personal Brand</p><p class="title">369</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="career_pilot.html" style="--item-color:#FF6B6B">
-      <img src="images/project-2.jpg" alt="Career Pilot">
+    <a class="gallery-item" href="ablaut.html" style="--item-color:#FF6B6B">
+      <img src="/work/personal/personal_image/ablaut.jpg" alt="Ablaut Deduplication">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Identity</p><p class="title">Career Pilot</p>
+        <p class="cat">Identity</p><p class="title">Ablaut Deduplication</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="rzr.html" style="--item-color:#F7B731">
-      <img src="" alt="Razors Edge">
+    <a class="gallery-item" href="langfords.html" style="--item-color:#F7B731">
+      <img src="/work/personal/personal_image/langfords.jpg" alt="Langfords">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Razors Edge</p>
+        <p class="cat">Branding</p><p class="title">Langfords</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="isl.html" style="--item-color:#A29BFE">
-      <img src="" alt="ISL">
+    <a class="gallery-item" href="portishead.html" style="--item-color:#A29BFE">
+      <img src="/work/personal/personal_image/portishead.jpg" alt="Portishead">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Brochure Design</p><p class="title">ISL</p>
+        <p class="cat">Heraldic Design</p><p class="title">Portishead</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="vdub.html" style="--item-color:#E17055">
-      <img src="/work/freelance/freelance_image/vdub.jpg" alt="VDUB">
+    <a class="gallery-item" href="richmond.html" style="--item-color:#E17055">
+      <img src="/work/personal/personal_image/richmond.jpg" alt="Richmond FC">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">VDUB</p>
+        <p class="cat">Sports Branding</p><p class="title">Richmond FC</p>
       </div>
     </a>
 
-        <a class="gallery-item" href="academy.html" style="--item-color:#FD79A8">
-      <img src="images/project-2.jpg" alt="Academy">
+    <a class="gallery-item" href="#" style="--item-color:#FD79A8">
+      <img src="images/project-6.jpg" alt="typography">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Academy</p>
+        <p class="cat">Font design</p><p class="title">Typography</p>
+      </div>
+    </a>
+
+        <a class="gallery-item" href="#" style="--item-color:#55EFC4">
+      <img src="/work/personal/personal_image/369_LUCKY.jpg" alt="Illustration">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">digital</p><p class="title">Illustration</p>
+      </div>
+    </a>
+
+            <a class="gallery-item" href="#" style="--item-color:#749BF7">
+      <img src="images/project-6.jpg" alt="Identity">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">identity</p><p class="title">Logos</p>
+      </div>
+    </a>
+
+              <a class="gallery-item" href="#" style="--item-color:#A8E063">
+      <img src="images/project-6.jpg" alt="Character Identity">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Character Design</p><p class="title">Monstore</p>
       </div>
     </a>
 
@@ -468,8 +469,8 @@ function setTheme(t){
 })();
 
 /* Menu */
-const hamburger   = document.querySelector('.hamburger');
-const menuOverlay = document.querySelector('.menu-overlay');
+const hamburger    = document.querySelector('.hamburger');
+const menuOverlay  = document.querySelector('.menu-overlay');
 
 function toggleMenu(){
   const isOpen = menuOverlay.classList.toggle('is-open');
@@ -490,22 +491,6 @@ function loadMore(){
     document.getElementById('loadMoreBtn').style.display='none';
   }
 }
-
-/* ─── Scroll entrance observer ─────────────────────────── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if(entry.isIntersecting){
-      setTimeout(() => {
-        entry.target.classList.add('in-view');
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.gallery-item:not(.hidden)').forEach(el => {
-  observer.observe(el);
-});
 </script>
 </body>
 </html>

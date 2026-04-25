@@ -141,16 +141,6 @@ nav{
 .gallery-item{
   position:relative;overflow:hidden;
   aspect-ratio:1/1;cursor:pointer;display:block;
-  /* ── Scroll entrance ── */
-  opacity:0;
-  transform:translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view{
-  opacity:1;
-  transform:translateY(0);
 }
 .gallery-item img{
   width:100%;height:100%;object-fit:cover;
@@ -282,7 +272,6 @@ footer{
   font-size:11.5px;line-height:1.72;color:var(--fg-muted);
   max-width:560px;margin:0 auto 28px;
 }
-
 .footer-bottom{
   display:flex;align-items:center;justify-content:space-between;
 }
@@ -299,19 +288,6 @@ footer{
   display:flex;align-items:center;gap:8px;
 }
 
-
-/* ─── SCROLL ENTRANCE ANIMATIONS ─────────────────────── */
-.gallery-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
 /* hidden */
 .gallery-item.hidden{display:none}
 
@@ -345,75 +321,98 @@ footer{
 <!-- MENU OVERLAY -->
 <div class="menu-overlay" onclick="closeMenu()">
   <ul class="menu-list" onclick="event.stopPropagation()">
-    <li><a href="../../index.html" onclick="closeMenu()">Home</a></li>
-    <li><a href="../../about.html" onclick="closeMenu()">About</a></li>
-    <li><a href="../../work.html" onclick="closeMenu()">Work</a></li>
-    <li><a href="../../contact.html" onclick="closeMenu()">Contact</a></li>
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="about.html" onclick="closeMenu()">About</a></li>
+    <li><a href="work.html" onclick="closeMenu()">Work</a></li>
+    <li><a href="contact.html" onclick="closeMenu()">Contact</a></li>
   </ul>
 </div>
 
 <!-- HERO -->
 <section class="hero">
-  <h1>Freelance</h1>
-  <h3>A rollercoaster ride of creative challenges</h3>
+  <h1>Finalversion_5</h1>
+  <h3>Because creative work is never really finished</h3>
 </section>
 
 <!-- GALLERY -->
 <section class="gallery-section">
   <div class="gallery-grid" id="galleryGrid">
 
-    <a class="gallery-item" href="brewing.html" style="--item-color:#4ECDC4">
-      <img src="images/project-1.jpg" alt="Hop Brewing">
+    <a class="gallery-item" href="#" style="--item-color:#4ECDC4">
+      <img src="images/monstore.jpg" alt="Monstore">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Presentation Design</p><p class="title">Hop Brewing</p>
+        <p class="cat">Character Design</p><p class="title">Monstore</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="career_pilot.html" style="--item-color:#FF6B6B">
-      <img src="images/project-2.jpg" alt="Career Pilot">
+      <a class="gallery-item" href="work/insignia/index.html" style="--item-color:#A8E063">
+      <img src="images/SBS_H.webp" alt="Insignia">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Identity</p><p class="title">Career Pilot</p>
+        <p class="cat">Design & Illustration</p><p class="title">Insignia</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="rzr.html" style="--item-color:#F7B731">
-      <img src="" alt="Razors Edge">
+    <a class="gallery-item" href="/work/personal/ablaut.html" style="--item-color:#F7B731">
+      <img src="images/OK_cap.jpg" alt="OK Branding">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Razors Edge</p>
+        <p class="cat">Branding</p><p class="title">Ablaut Deduplication</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="isl.html" style="--item-color:#A29BFE">
-      <img src="" alt="ISL">
+    <a class="gallery-item" href="#" style="--item-color:#A29BFE">
+      <img src="images/project-4.jpg" alt="Hardcore">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Brochure Design</p><p class="title">ISL</p>
+        <p class="cat">Typography</p><p class="title">Hardcore</p>
       </div>
     </a>
 
-    <a class="gallery-item" href="vdub.html" style="--item-color:#E17055">
-      <img src="/work/freelance/freelance_image/vdub.jpg" alt="VDUB">
+    <a class="gallery-item" href="#" style="--item-color:#FD79A8">
+      <img src="images/project-5.jpg" alt="Taste the Biscuit">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">VDUB</p>
+        <p class="cat">Poster Design</p><p class="title">Taste the Biscuit</p>
       </div>
     </a>
 
-        <a class="gallery-item" href="academy.html" style="--item-color:#FD79A8">
-      <img src="images/project-2.jpg" alt="Academy">
+    <a class="gallery-item" href="#" style="--item-color:#55EFC4">
+      <img src="images/project-6.jpg" alt="Dong Ding">
       <div class="g-overlay"></div><div class="g-bar"></div>
       <div class="gallery-caption">
-        <p class="cat">Branding</p><p class="title">Academy</p>
+        <p class="cat">Apparel</p><p class="title">Dong Ding</p>
       </div>
     </a>
 
+    <a class="gallery-item hidden" href="#" style="--item-color:#E17055">
+      <img src="images/project-7.jpg" alt="Fork in the Road">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Illustration</p><p class="title">Fork in the Road</p>
+      </div>
+    </a>
+
+    <a class="gallery-item hidden" href="#" style="--item-color:#74B9FF">
+      <img src="images/richmond.jpg" alt="Bantr">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Sports Branding</p><p class="title">Richmond AFC</p>
+      </div>
+    </a>
+
+    <a class="gallery-item hidden" href="#" style="--item-color:#A8E063">
+      <img src="images/project-9.jpg" alt="Peas in a Pod">
+      <div class="g-overlay"></div><div class="g-bar"></div>
+      <div class="gallery-caption">
+        <p class="cat">Character Design</p><p class="title">Peas in a Pod</p>
+      </div>
+    </a>
 
   </div>
 
-  <!--<div class="load-more-wrap">
+  <div class="load-more-wrap">
     <button class="btn" id="loadMoreBtn" onclick="loadMore()">
       <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M21 2v6h-6"/>
@@ -421,18 +420,19 @@ footer{
       </svg>
       <span class="btn-label">Load More</span>
     </button>
-  </div> -->
+  </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-   <!-- Logo row -->
+  <!-- Logo row -->
   <div class="footer-logos">
-  <img src="../../images/AdobeLogo.png" alt="Adobe" class="footer-logo">
-  <img src="../../images/LumaLogo.png" alt="Luma AI" class="footer-logo">
-  <img src="../../images/GeminiLogo.png" alt="Gemini" class="footer-logo">
-  <img src="../../images/ClaudeLogo.png" alt="Claude" class="footer-logo">
+  <img src="images/AdobeLogo.png" alt="Adobe" class="footer-logo">
+  <img src="images/LumaLogo.png" alt="Luma AI" class="footer-logo">
+  <img src="images/GeminiLogo.png" alt="Gemini" class="footer-logo">
+  <img src="images/ClaudeLogo.png" alt="Claude" class="footer-logo">
 </div>
+
 
   <p class="footer-para">
     Vector work produced in Adobe Illustrator. 3D photorealistic renders generated with Adobe Photoshop, Nano Banana and Luma AI. Video with Google Flow and Veo. Research and design iteration assisted by Gemini and Claude. No AI is utilised in Adobe Illustrator, all vectors are hand drawn.
@@ -446,7 +446,7 @@ footer{
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 20c0-3.9 3.6-7 8-7s8 3.1 8 7"/>
       </svg>-->
-      <img src="../../images/Asset 9.png" alt="Jason Stone"></img>
+      <img src="images/Asset 9.png" alt="Jason Stone"></img>
     </div>
     <div class="footer-copy">
       <span>Gosub / 369</span>
@@ -468,8 +468,8 @@ function setTheme(t){
 })();
 
 /* Menu */
-const hamburger   = document.querySelector('.hamburger');
-const menuOverlay = document.querySelector('.menu-overlay');
+const hamburger    = document.querySelector('.hamburger');
+const menuOverlay  = document.querySelector('.menu-overlay');
 
 function toggleMenu(){
   const isOpen = menuOverlay.classList.toggle('is-open');
@@ -490,22 +490,6 @@ function loadMore(){
     document.getElementById('loadMoreBtn').style.display='none';
   }
 }
-
-/* ─── Scroll entrance observer ─────────────────────────── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if(entry.isIntersecting){
-      setTimeout(() => {
-        entry.target.classList.add('in-view');
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.gallery-item:not(.hidden)').forEach(el => {
-  observer.observe(el);
-});
 </script>
 </body>
 </html>

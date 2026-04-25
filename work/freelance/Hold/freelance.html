@@ -141,16 +141,6 @@ nav{
 .gallery-item{
   position:relative;overflow:hidden;
   aspect-ratio:1/1;cursor:pointer;display:block;
-  /* ── Scroll entrance ── */
-  opacity:0;
-  transform:translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view{
-  opacity:1;
-  transform:translateY(0);
 }
 .gallery-item img{
   width:100%;height:100%;object-fit:cover;
@@ -299,19 +289,6 @@ footer{
   display:flex;align-items:center;gap:8px;
 }
 
-
-/* ─── SCROLL ENTRANCE ANIMATIONS ─────────────────────── */
-.gallery-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.65s var(--ease),
-    transform 0.65s var(--ease);
-}
-.gallery-item.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
 /* hidden */
 .gallery-item.hidden{display:none}
 
@@ -468,8 +445,8 @@ function setTheme(t){
 })();
 
 /* Menu */
-const hamburger   = document.querySelector('.hamburger');
-const menuOverlay = document.querySelector('.menu-overlay');
+const hamburger    = document.querySelector('.hamburger');
+const menuOverlay  = document.querySelector('.menu-overlay');
 
 function toggleMenu(){
   const isOpen = menuOverlay.classList.toggle('is-open');
@@ -490,22 +467,6 @@ function loadMore(){
     document.getElementById('loadMoreBtn').style.display='none';
   }
 }
-
-/* ─── Scroll entrance observer ─────────────────────────── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if(entry.isIntersecting){
-      setTimeout(() => {
-        entry.target.classList.add('in-view');
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.gallery-item:not(.hidden)').forEach(el => {
-  observer.observe(el);
-});
 </script>
 </body>
 </html>
