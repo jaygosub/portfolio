@@ -306,7 +306,7 @@ nav{
 }
 .cta-title{
   font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(40px,0vw,6px);letter-spacing:.02em;font-weight: 200;
+  font-size:clamp(48px,10vw,96px);letter-spacing:.02em;
   text-transform:uppercase;color:var(--fg);
   line-height:1;margin-bottom:36px;transition:color .35s;
 }
@@ -464,111 +464,6 @@ footer{
   color: var(--fg);
 }
 
-/* ─── HORIZONTAL IMAGE SCROLLER ─────────────────────── */
-.h-scroll-track {
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  cursor: grab;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.h-scroll-track::-webkit-scrollbar { display: none; }
-.h-scroll-track.is-dragging { cursor: grabbing; user-select: none; }
-
-.h-scroll-inner {
-  display: flex;
-  gap: 0;
-  width: max-content;
-}
-
-.h-scroll-item {
-  flex-shrink: 0;
-  width: 100vw;
-  height: 60vh;
-  min-height: 380px;
-  overflow: hidden;
-  position: relative;
-}
-
-.h-scroll-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  display: block;
-}
-
-.h-scroll-caption {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 18px var(--pad-x) 56px;
-  background: linear-gradient(to top, rgba(35,31,32,.82), transparent);
-  z-index: 1;
-}
-.h-scroll-caption span {
-  font-family: 'Inter Tight', sans-serif;
-  font-weight: 500;
-  font-size: 10px;
-  letter-spacing: .20em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.7);
-}
-
-/* ── Dot indicators ── */
-.h-scroll-dots {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  z-index: 10;
-  pointer-events: none;
-}
-.h-scroll-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  transition: background 0.3s, transform 0.3s;
-  flex-shrink: 0;
-}
-.h-scroll-dot.active {
-  background: #fff;
-  transform: scale(1.25);
-}
-
-/* ── Chevron hint ── */
-.h-scroll-chevron {
-  position: absolute;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.5s var(--ease);
-}
-.h-scroll-chevron.hidden { opacity: 0; }
-.h-scroll-chevron svg {
-  width: 32px; height: 32px;
-  stroke: rgba(255,255,255,0.75);
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: chevron-pulse 1.6s ease-in-out infinite;
-}
-@keyframes chevron-pulse {
-  0%, 100% { transform: translateX(0);   opacity: 0.7; }
-  50%       { transform: translateX(7px); opacity: 1;   }
-}
-
 /* ─── RESPONSIVE ──────────────────────────────────────── */
 @media(max-width:900px){:root{--pad-x:36px}}
 @media(max-width:700px){
@@ -618,12 +513,12 @@ footer{
 ═════════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-image">
-    <img src="pfc_images/pfcbadge.jpg" alt="Project hero">
+    <img src="images/holding-image.jpg" alt="Project hero">
   </div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
     <p class="hero-cat">Case Study</p>
-    <h1 class="hero-title">Portsmouth <br>Football Club</h1>
+    <h1 class="hero-title">Fareham College</h1>
   </div>
 </section>
 
@@ -632,91 +527,68 @@ footer{
 ═════════════════════════════════════════════════════════ -->
 <section class="pull-quote">
   <blockquote>
-    "Probably the best job I've ever had"
+    "Being in a classroom, interacting with my students was a fantastic experience"
   </blockquote>
-  <cite>Keep your friends close and your enemies closer</cite>
+  <cite>Dealing with sparse resources, overwhelming admin, not so much</cite>
 </section>
 
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════════════════════════════
      2-COL — IMAGE RIGHT
-═════════════════════════════════════════════════════════ -->
+═════════════════════════════════════════════════════════ 
 <div class="two-col">
   <div class="col-text">
-    <p class="section-label"></p>
-    <h2>Championship Celebrations</h2>
-    <p>A specially commissioned project to celebrate the club winning the Championship, a momentus period in the club's history.</p>
-    <p>Promotion to the Premier League followed and saw the club's return to the top flight.</p>
+    <p class="section-label">The Brief</p>
+    <h2>Redesigning a regiment</h2>
+    <p>The Coldstream Guards badge carries centuries of history — the star, the motto, the Garter. The challenge was to honour that legacy while pushing the vector craft to its absolute limit.</p>
+    <p>Every element was hand-drawn in Adobe Illustrator. No live trace, no shortcuts — just anchors, handles and patience.</p>
   </div>
   <div class="col-image">
-    <img src="pfc_images/champ_toddy_spread.jpg" alt="Vector artwork">
+    <img src="images/holding-image.jpg" alt="Vector artwork">
   </div>
 </div>
 
-<div class="section-divider"></div>
+<div class="section-divider"></div>-->
 
 <!-- ══════════════════════════════════════════════════════
-     HORIZONTAL IMAGE SCROLLER — full-bleed snap
-     Each .h-scroll-item fills the full viewport width.
-     Dots + chevron are injected by JS automatically.
-     Add/remove .h-scroll-item blocks for more images.
-     Drag on desktop · swipe on touch.
-═════════════════════════════════════════════════════════ -->
-<div class="h-scroll-track" id="hScroll">
-  <div class="h-scroll-inner">
-
-    <div class="h-scroll-item">
-      <img src="pfc_images/Autograph_Linvoy_All.jpg" alt="Linvoy Autograph Card">
-      <div class="h-scroll-caption"><span>Linvoy Primus — Autograph Card</span></div>
-    </div>
-
-    <!-- ↓ Replace src with your actual image paths, one block per image -->
-    <div class="h-scroll-item">
-      <img src="pfc_images/Autograph_Hughes_All.jpg" alt="Autograph Card 2">
-      <div class="h-scroll-caption"><span>Player Autograph Cards — Illustrator · Photoshop · InDesign</span></div>
-    </div>
-
-    <div class="h-scroll-item">
-      <img src="pfc_images/Autograph_Toddy_All.jpg" alt="Autograph Card 3">
-      <div class="h-scroll-caption"><span>Player Autograph Cards — Illustrator · Photoshop · InDesign</span></div>
-    </div>
-    <!-- ↑ Duplicate above block for each additional image -->
-
+     FULL BLEED IMAGE
+═════════════════════════════════════════════════════════ 
+<div class="fullbleed">
+  <img src="images/holding-image.jpg" alt="Full bleed detail">
+  <div class="fullbleed-caption">
+    <span>Vector detail — Adobe Illustrator</span>
   </div>
-
-  <!-- Dots and chevron injected here by JS -->
-</div>
-
-
-<!-- ══════════════════════════════════════════════════════
-     2-COL — IMAGE LEFT
-═════════════════════════════════════════════════════════ -->
-<div class="two-col">
-  <div class="col-image">
-    <img src="pfc_images/playercards.jpg" alt="quashie calendar">
-  </div>
-  <div class="col-text">
-    <p class="section-label"></p>
-    <h2>One stop shop</h2>
-    <p>After taking on the media department and employing a capable team of four, our little band did just about everything you can think of</p>
-    <p>Point of sale, advertising, matchday programmes, merchandise, event assets, large format, posters, flyers, branding,webtv and much more.</p>
-  </div>
-</div>
+</div>-->
 
 <!-- ══════════════════════════════════════════════════════
      2-COL — DOUBLE IMAGE
-═════════════════════════════════════════════════════════ -->
+═════════════════════════════════════════════════════════ 
 <div class="two-col">
   <div class="col-image">
-    <img src="pfc_images/pompeysport.jpg" alt="3D render">
+    <img src="images/holding-image.jpg" alt="3D render">
   </div>
   <div class="col-image">
-    <img src="pfc_images/pompeyblue.jpg" alt="3D render">
+    <img src="images/holding-image.jpg" alt="3D render">
+  </div>
+</div>-->
+
+<!-- ══════════════════════════════════════════════════════
+     2-COL — IMAGE LEFT
+═════════════════════════════════════════════════════════ 
+<div class="two-col">
+  <div class="col-image">
+    <img src="images/holding-image.jpg" alt="3D render">
+  </div>
+  <div class="col-text">
+    <p class="section-label">The Render</p>
+    <h2>From flat to photorealistic</h2>
+    <p>Once the vector was complete, the artwork was brought into a 3D pipeline. AI-assisted rendering breathes light and material into the flat geometry — metal, enamel, gold leaf.</p>
+    <p>The result sits somewhere between archive photography and product shot.</p>
   </div>
 </div>
 
-<div class="section-divider"></div>
+<div class="section-divider"></div>-->
 
 <!-- ══════════════════════════════════════════════════════
      VIDEO — LANDSCAPE 4:3
@@ -843,10 +715,10 @@ footer{
 <footer>
     <!-- Logo row -->
   <div class="footer-logos">
-  <img src="images/AdobeLogo.png" alt="Adobe" class="footer-logo">
-  <img src="images/LumaLogo.png" alt="Luma AI" class="footer-logo">
-  <img src="images/GeminiLogo.png" alt="Gemini" class="footer-logo">
-  <img src="images/ClaudeLogo.png" alt="Claude" class="footer-logo">
+  <img src="../../images/AdobeLogo.png" alt="Adobe" class="footer-logo">
+  <img src="../../images/LumaLogo.png" alt="Luma AI" class="footer-logo">
+  <img src="../../images/GeminiLogo.png" alt="Gemini" class="footer-logo">
+  <img src="../../images/ClaudeLogo.png" alt="Claude" class="footer-logo">
 </div>
 
   <p class="footer-para">
@@ -859,7 +731,7 @@ footer{
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 20c0-3.9 3.6-7 8-7s8 3.1 8 7"/>
       </svg> -->
-      <img src="images/Asset 9.png" alt="Jason Stone">
+      <img src="../../images/Asset 9.png" alt="Jason Stone">
     </div>
     <div class="footer-copy">
       <span>Gosub / 369</span>
@@ -895,69 +767,6 @@ function closeMenu(){
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 
 /* Load More — project pages don't need this but keep stub */
-
-/* ─── Horizontal scroller — full-bleed snap ─────────── */
-(function(){
-  const track = document.getElementById('hScroll');
-  if(!track) return;
-
-  const inner = track.querySelector('.h-scroll-inner');
-  const items = track.querySelectorAll('.h-scroll-item');
-  const count = items.length;
-  if(count < 2) return;
-
-  /* ── Build dot indicators ── */
-  const dotsWrap = document.createElement('div');
-  dotsWrap.className = 'h-scroll-dots';
-  for(let i = 0; i < count; i++){
-    const d = document.createElement('div');
-    d.className = 'h-scroll-dot' + (i === 0 ? ' active' : '');
-    dotsWrap.appendChild(d);
-  }
-  track.appendChild(dotsWrap);
-  const dots = dotsWrap.querySelectorAll('.h-scroll-dot');
-
-  /* ── Build chevron ── */
-  const chev = document.createElement('div');
-  chev.className = 'h-scroll-chevron';
-  chev.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>';
-  track.appendChild(chev);
-
-  /* ── Update dots + chevron on scroll ── */
-  function onScroll(){
-    const slideW  = track.offsetWidth;
-    const index   = Math.round(track.scrollLeft / slideW);
-
-    dots.forEach((d, i) => d.classList.toggle('active', i === index));
-
-    /* Chevron: hide once scrolled away from first slide, show when back */
-    if(track.scrollLeft > slideW * 0.15){
-      chev.classList.add('hidden');
-    } else {
-      chev.classList.remove('hidden');
-    }
-  }
-
-  track.addEventListener('scroll', onScroll, { passive: true });
-
-  /* ── Mouse drag ── */
-  let isDown = false, startX, scrollLeft;
-  track.addEventListener('mousedown', e => {
-    isDown = true;
-    track.classList.add('is-dragging');
-    startX     = e.pageX - track.offsetLeft;
-    scrollLeft = track.scrollLeft;
-  });
-  track.addEventListener('mouseleave', () => { isDown = false; track.classList.remove('is-dragging'); });
-  track.addEventListener('mouseup',    () => { isDown = false; track.classList.remove('is-dragging'); });
-  track.addEventListener('mousemove', e => {
-    if(!isDown) return;
-    e.preventDefault();
-    const x    = e.pageX - track.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    track.scrollLeft = scrollLeft - walk;
-  });
-})();
 </script>
 </body>
 </html>
