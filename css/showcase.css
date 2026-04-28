@@ -67,8 +67,8 @@
   color:var(--fg-muted);margin-bottom:14px;
 }
 .col-text h2{
-  font-family:'Bebas Neue',sans-serif;font-weight: 200;
-  font-size:clamp(46px,0vw,58px);letter-spacing:.01em;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,5vw,58px);letter-spacing:.03em;
   color:var(--fg);line-height:1;margin-bottom:18px;transition:color .35s;
 }
 .col-text p{
@@ -195,7 +195,7 @@
 }
 .cta-title{
   font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(28px,5vw,56px);letter-spacing:.02em;font-weight: 200;
+  font-size:clamp(48px,10vw,96px);letter-spacing:.02em;
   text-transform:uppercase;color:var(--fg);
   line-height:1;margin-bottom:36px;transition:color .35s;
 }
@@ -313,6 +313,18 @@
 
 .proj-foot-home:hover {
   color: var(--fg);
+}
+
+
+/* ─── THREE-COL ─────────────────────────────────────────── */
+.three-col{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:0;align-items:stretch;
+}
+.three-col-image{position:relative;min-height:280px;overflow:hidden}
+.three-col-image img{
+  position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
 }
 
 /* ─── HORIZONTAL IMAGE SCROLLER ─────────────────────── */
