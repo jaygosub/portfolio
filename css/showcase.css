@@ -67,7 +67,7 @@
   color:var(--fg-muted);margin-bottom:14px;
 }
 .col-text h2{
-  font-family:'Bebas Neue',sans-serif;
+  font-family:'Bebas Neue',sans-serif;font-weight: 200;
   font-size:clamp(36px,5vw,58px);letter-spacing:.03em;
   color:var(--fg);line-height:1;margin-bottom:18px;transition:color .35s;
 }
