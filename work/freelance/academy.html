@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT TITLE — Jason Stone</title>
+<title>Academy by Lloyd Hughes — Jason Stone</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -28,7 +28,6 @@
   </div>
 </nav>
 
-<!-- MENU OVERLAY -->
 <div class="menu-overlay" onclick="closeMenu()">
   <ul class="menu-list" onclick="event.stopPropagation()">
     <li><a href="../../index.html" onclick="closeMenu()">Home</a></li>
@@ -38,169 +37,150 @@
   </ul>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     HERO
-═════════════════════════════════════════════════════════ -->
+<!-- HERO -->
 <section class="hero">
   <div class="hero-image">
-    <img src="" alt="Project hero">
+    <img src="freelance_image/academy4.jpg" alt="Academy brand hero">
   </div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
-    <p class="hero-cat">Branding · Identity</p>
+    <p class="hero-cat"></p>
     <h1 class="hero-title">Academy</h1>
+    <p class="hero-cat">Branding · Identity</p>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════
-     PULL QUOTE
-═════════════════════════════════════════════════════════ -->
+<!-- PULL QUOTE -->
 <section class="pull-quote">
-  <blockquote>
-    "New identity for a hairdressing academy"
-  </blockquote>
-  <cite>Its all gone quiet over there</cite>
+  <blockquote>"Hard-edged and industrial for a place that takes the craft seriously."</blockquote>
+  <cite>Academy by Lloyd Hughes</cite>
 </section>
 
 <div class="section-divider"></div>
 
-<!-- ══════════════════════════════════════════════════════
-     2-COL — IMAGE RIGHT
-═════════════════════════════════════════════════════════ 
-<div class="two-col">
-  <div class="col-text">
-    <p class="section-label">The Brief</p>
-    <h2>Redesigning a regiment</h2>
-    <p>The Coldstream Guards badge carries centuries of history — the star, the motto, the Garter. The challenge was to honour that legacy while pushing the vector craft to its absolute limit.</p>
-    <p>Every element was hand-drawn in Adobe Illustrator. No live trace, no shortcuts — just anchors, handles and patience.</p>
+<!-- ═══════════════════════════════════════════════════
+     BRAND DOCUMENT
+     
+     All colours controlled via --ac-* tokens in global.css.
+     To change any section colour: edit the custom property
+     in global.css :root, or add style="background:#hex"
+     directly on the .ac-2col-cell / .ac-3col-cell.
+     
+     Image sizes: edit --ac-*-w / --ac-*-h in global.css :root.
+     
+     Asset paths: all images live in freelance_image/
+     Move Asset_*.png files there alongside the jpgs.
+════════════════════════════════════════════════════ -->
+<div class="ac-doc">
+
+  <!-- 1. LOGO — full bleed, light grey (--ac-lgrey) -->
+  <div class="ac-logo-panel">
+    <img class="ac-logo-mark" src="freelance_image/Asset_6.png" alt="Academy logo mark">
   </div>
-  <div class="col-image">
-    <img src="images/image-01.jpg" alt="Vector artwork">
+
+  <!-- 2. BOOK — full bleed photo -->
+  <div class="ac-full ac-rv">
+    <img class="ac-img-full" src="freelance_image/academy2.jpg" alt="Academy brand document">
   </div>
-</div>
 
-<div class="section-divider"></div>-->
-
-<!-- ══════════════════════════════════════════════════════
-     FULL BLEED IMAGE
-═════════════════════════════════════════════════════════ 
-<div class="fullbleed">
-  <img src="images/fullbleed-01.jpg" alt="Full bleed detail">
-  <div class="fullbleed-caption">
-    <span>Vector detail — Adobe Illustrator</span>
+    <!-- 3. 2-COL ROW 2: mug (yellow) | monogram (light grey) -->
+  <div class="ac-2col ac-rv">
+    <div class="ac-2col-cell" style="background:var(--ac-yellow)">
+      <img class="ac-img" style="width:80%;max-width:320px;" src="freelance_image/academy_mug.png" alt="Academy mug">
+    </div>
+    <div class="ac-2col-cell" style="background:var(--ac-lgrey)">
+      <img class="ac-img ac-img-monogram" src="freelance_image/Asset_5.png" alt="ABLH monogram">
+    </div>
   </div>
-</div>-->
 
-<!-- ══════════════════════════════════════════════════════
-     2-COL — IMAGE LEFT
-═════════════════════════════════════════════════════════
-<div class="two-col">
-  <div class="col-image">
-    <img src="images/monstore2.png" alt="3D render">
+  <!-- 4. 2-COL ROW 1: phone (yellow) | big A (mid grey) -->
+  <div class="ac-2col ac-rv">
+    <div class="ac-2col-cell" style="background:var(--ac-text)">
+      <img id="acPhone" class="ac-img ac-img-phone" src="freelance_image/Asset_13.png" alt="Phone in hand">
+    </div>
+    <div class="ac-2col-cell ac-flush" style="background:var(--ac-mgrey)">
+      <img class="ac-img ac-img-biga" src="freelance_image/Asset_7.png" alt="Academy A detail">
+    </div>
   </div>
-  <div class="col-text">
-    <p class="section-label">The Render</p>
-    <h2>From flat to photorealistic</h2>
-    <p>Once the vector was complete, the artwork was brought into a 3D pipeline. AI-assisted rendering breathes light and material into the flat geometry — metal, enamel, gold leaf.</p>
-    <p>The result sits somewhere between archive photography and product shot.</p>
+
+  <!-- 5. 2-COL ROW 3: CUT text (black) | portrait (black) -->
+  <div class="ac-2col ac-rv">
+    <div class="ac-2col-cell" style="background:var(--ac-black)">
+      <img class="ac-img ac-img-cut" src="freelance_image/Asset_9.png" alt="CUT CUT CUT">
+    </div>
+    <div class="ac-2col-cell ac-flush" style="background:var(--ac-black)">
+      <div class="ac-portrait-wrap">
+        <img class="ac-img-portrait" src="freelance_image/academy_style.jpg" alt="Portrait">
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="section-divider"></div>-->
-
-<!-- ══════════════════════════════════════════════════════
-     VIDEO — LANDSCAPE 4:3
-     Use this block for process recordings, turntables, promos.
-     Change aspect-ratio to 16/9 in the .video-wrap style
-     inline if needed per project.
-═════════════════════════════════════════════════════════ 
-<div class="video-landscape">
-  <p class="video-label">Process — Illustrator Build</p>
-  <div class="video-wrap" style="aspect-ratio:4/3">-->
-    <!--
-    ╔══════════════════════════════════════════════╗
-    ║  HOW TO ADD VIDEO                            ║
-    ║                                              ║
-    ║  LOCAL FILE (recommended):                   ║
-    ║  Place video.mp4 in this project folder,     ║
-    ║  then uncomment the line below:              ║
-    ║                                              ║ 
-    ║  <video src="images/purple2.mp4"             ║
-    ║         autoplay loop muted playsinline      ║
-    ║         controls></video>                    ║
-    ║                                              ║
-    ║  • autoplay  = starts immediately            ║
-    ║  • muted     = required for autoplay         ║
-    ║  • loop      = repeats                       ║
-    ║  • playsinline = no fullscreen on iOS        ║
-    ║  • controls  = shows play/pause bar          ║
-    ║                                              ║
-    ║  RATIO: change aspect-ratio on .video-wrap   ║
-    ║  above — 4/3 or 16/9                         ║
-    ║                                              ║
-    ║  YOUTUBE / VIMEO EMBED:                      ║
-    ║  <iframe                                     ║
-    ║    src="https://www.youtube.com/embed/ID     ║
-    ║         ?autoplay=1&mute=1&loop=1            ║
-    ║         &playlist=ID"                        ║
-    ║    allow="autoplay;fullscreen"               ║
-    ║    allowfullscreen>                          ║
-    ║  </iframe>                                   ║
-    ╚══════════════════════════════════════════════╝
-    -->
-    <!--<video src="images/purple2.mp4" autoplay loop muted playsinline controls></video>
+  <!-- 6. 3-COL ROW 1: dot grid (black) | scissors (white) | dark A (black) -->
+  <div class="ac-3col ac-rv">
+    <div class="ac-3col-cell" style="background:var(--ac-black)">
+      <div class="ac-dot-grid">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+        <img src="freelance_image/Asset_10.png" alt="">
+      </div>
+    </div>
+    <div class="ac-3col-cell" style="background:var(--ac-white)">
+      <img class="ac-img ac-img-scissors" src="freelance_image/Asset_12.png" alt="Scissors">
+    </div>
+    <div class="ac-3col-cell ac-flush" style="background:var(--ac-black)">
+      <img class="ac-img ac-img-darka" src="freelance_image/Asset_8.png" alt="A mark">
+    </div>
   </div>
-  <p class="video-caption">Illustrator build — 4 min timelapse</p>
-</div>
-<div class="section-divider"></div>-->
 
-<!-- ══════════════════════════════════════════════════════
-     VIDEO — PORTRAIT 9:16 with text panel
-     Ideal for Reels / TikTok / phone previews.
-     Remove .video-portrait-text div for centred-only layout.
-═════════════════════════════════════════════════════════ 
-<div class="video-portrait-section">
-  <div class="video-portrait-text">
-    <p class="section-label">Social Cut</p>
-    <h2>Rendered for Reels</h2>
-    <p>A vertical cut produced for Instagram and TikTok — the badge rotating in photorealistic light, scored to a short audio sting.</p>
-    <p>Rendered at 1080 × 1920, colour-graded to match the Insignia palette.</p>
+  <!-- 7. 3-COL ROW 2: type specimen | logo | palette -->
+  <div class="ac-spec ac-rv">
+    <div>
+      <div class="ac-spec-type-head">AZO SANS</div>
+      <div class="ac-spec-type-alpha">
+        ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+        abcdefghijklmnopqrstuvwxyz1234567890<br>
+        !@£$%^&amp; *()-+~&lt;&gt;?:;
+      </div>
+    </div>
+    <div class="ac-spec-logo">
+      <img class="ac-logo-mark" src="freelance_image/Asset_6.png" alt="Academy logo">
+    </div>
+    <div>
+      <div class="ac-palette-head">PALETTE</div>
+      <div class="ac-swatches">
+        <div class="ac-swatch" style="background:#1a1a1a"></div>
+        <div class="ac-swatch" style="background:#555555"></div>
+        <div class="ac-swatch" style="background:#aaaaaa"></div>
+        <div class="ac-swatch" style="background:var(--ac-yellow)"></div>
+        <div class="ac-swatch" style="background:var(--ac-white);border:1px solid #ccc"></div>
+      </div>
+    </div>
   </div>
-  <div class="video-portrait-wrap">-->
-    
-    <!--  OPTION A — local:
-     <video src="images/purple1.mp4" controls playsinline loop muted></video>
 
-      OPTION B — embed:
-      <iframe src="https://www.youtube.com/embed/VIDEO_ID?rel=0"
-              allow="autoplay; fullscreen" allowfullscreen></iframe>
-    -->
-    <!--
-      LOCAL: <video src="video-portrait.mp4" autoplay loop muted playsinline controls></video>
-      EMBED: <iframe src="https://www.youtube.com/embed/ID?autoplay=1&mute=1&loop=1&playlist=ID"
-                     allow="autoplay;fullscreen" allowfullscreen></iframe>
-    -->
-    <!--<video src="images/purple1.mp4" autoplay loop muted playsinline></video>
+  <!-- 8. TDP STRIP — full bleed (mirrors section 2 pattern) -->
+  <div class="ac-full ac-rv" style="background:var(--ac-white);padding:20px 60px 32px;">
+    <img class="ac-img-full" style="max-width:860px;margin:0 auto;" src="freelance_image/Asset_11.png" alt="Technical Development Plan">
   </div>
-</div>-->
 
-<!-- ══════════════════════════════════════════════════════
-     FULL BLEED IMAGE 2
-═════════════════════════════════════════════════════════ 
-<div class="fullbleed">
-  <img src="images/fullbleed-02.jpg" alt="Final render">
-  <div class="fullbleed-caption">
-    <span>Final photorealistic render — AI assisted</span>
+  <!-- 9. COLLATERAL — logo lockup + full photo (mirrors section 1 pattern) -->
+  <div class="ac-collateral-wrap ac-rv">
+    <div class="ac-collateral-inner">
+      <img class="ac-img-full" src="freelance_image/academy1.jpg" alt="Academy brand collateral">
+    </div>
   </div>
-</div>-->
 
+</div><!-- /ac-doc -->
 
-<!-- ══════════════════════════════════════════════════════
-     PROJECT NAVIGATION
-     Links to previous/next projects and section index.
-═════════════════════════════════════════════════════════ -->
-
-
+<!-- PROJECT NAV -->
 <div class="proj-foot-nav">
   <a href="vdub.html" class="proj-foot-btn">
     <span class="proj-foot-arrow">←</span>
@@ -213,14 +193,11 @@
   </a>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     CTA
-═════════════════════════════════════════════════════════ -->
+<!-- CTA -->
 <section class="cta-section">
   <p class="cta-strap">Got a project in mind?</p>
   <h2 class="cta-title">Lets work together</h2>
   <a class="btn" href="/cdn-cgi/l/email-protection#e48e85978b8aa4838b979186d7d2ddca878b89">
-    <!-- Untitled UI: mail-01 -->
     <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
       <polyline points="22,6 12,13 2,6"/>
@@ -231,24 +208,17 @@
 
 <!-- FOOTER -->
 <footer>
-    <!-- Logo row -->
   <div class="footer-logos">
-  <img src="../../images/AdobeLogo.png" alt="Adobe" class="footer-logo">
-  <img src="../../images/LumaLogo.png" alt="Luma AI" class="footer-logo">
-  <img src="../../images/GeminiLogo.png" alt="Gemini" class="footer-logo">
-  <img src="../../images/ClaudeLogo.png" alt="Claude" class="footer-logo">
-</div>
-
+    <img src="../../images/AdobeLogo.png" alt="Adobe" class="footer-logo">
+    <img src="../../images/LumaLogo.png" alt="Luma AI" class="footer-logo">
+    <img src="../../images/GeminiLogo.png" alt="Gemini" class="footer-logo">
+    <img src="../../images/ClaudeLogo.png" alt="Claude" class="footer-logo">
+  </div>
   <p class="footer-para">
     Vector work produced in Adobe Illustrator. 3D photorealistic renders generated with Adobe Photoshop, Nano Banana and Luma AI. Video with Google Flow and Veo. Research and design iteration assisted by Gemini and Claude. No AI is utilised in Adobe Illustrator, all vectors are hand drawn.
   </p>
-
   <div class="footer-bottom">
     <div class="footer-avatar">
-      <!--<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--fg-muted)">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 20c0-3.9 3.6-7 8-7s8 3.1 8 7"/>
-      </svg> -->
       <img src="../../images/Asset 9.png" alt="Jason Stone">
     </div>
     <div class="footer-copy">
@@ -282,7 +252,33 @@ function closeMenu(){
   menuOverlay.classList.remove('is-open');
   hamburger.classList.remove('is-open');
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMenu(); });
+
+/* Scroll reveal */
+document.querySelectorAll('.ac-rv').forEach(el => {
+  new IntersectionObserver((entries, obs) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('ac-on'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 }).observe(el);
+});
+
+/* Phone hand — slide in from top on scroll into view */
+const acPhone = document.getElementById('acPhone');
+if (acPhone) {
+  acPhone.style.opacity   = '0';
+  acPhone.style.transform = 'translateY(-24px)';
+  new IntersectionObserver((entries, obs) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        acPhone.style.transition = 'opacity 0.7s ease, transform 0.7s cubic-bezier(0.22,1,0.36,1)';
+        acPhone.style.opacity    = '1';
+        acPhone.style.transform  = 'translateY(0)';
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 }).observe(acPhone);
+}
 </script>
 </body>
 </html>

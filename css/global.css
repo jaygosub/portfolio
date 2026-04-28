@@ -161,3 +161,311 @@ nav{
 .hamburger.is-open .bar:nth-child(1){ transform:translateY(8px) rotate(45deg); }
 .hamburger.is-open .bar:nth-child(2){ opacity:0;transform:scaleX(0); }
 .hamburger.is-open .bar:nth-child(3){ transform:translateY(-8px) rotate(-45deg); }
+/* ═══════════════════════════════════════════════════════
+   ACADEMY — brand document layout
+   All background colours set via custom properties.
+   Change the --ac-* values below to retheme any section.
+   Image sizes set via --ac-img-* — adjust per section.
+═══════════════════════════════════════════════════════ */
+
+/* ── Colour tokens ─────────────────────────────────── */
+:root {
+  --ac-lgrey:   #dbdbdb;   /* light grey — logo panel, brief */
+  --ac-mgrey:   #bbbdba;   /* mid grey  — 2col right panels  */
+  --ac-yellow:  #e1cc01;   /* yellow    — 2col left panels   */
+  --ac-black:   #000000;   /* black     — CUT / dot sections */
+  --ac-white:   #ffffff;   /* white     — spec / collateral  */
+  --ac-text:    #666666;   /* body copy colour               */
+
+  /* Image size knobs — adjust freely */
+  --ac-logo-w:        200px;
+  --ac-word-h:        18px;
+  --ac-phone-w:       200%;
+  --ac-biga-w:        100%;
+  --ac-monogram-w:    200px;
+  --ac-cut-w:         115%;
+  --ac-dot-size:      28px;
+  --ac-scissors-w:    140px;
+  --ac-darka-w:       100%;
+  --ac-coll-logo-w:   88px;
+}
+
+/* ── Scroll reveal ─────────────────────────────────── */
+.ac-rv {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.ac-rv.ac-on          { opacity: 1; transform: none; }
+.ac-rv.ac-d1          { transition-delay: 0.1s;  }
+.ac-rv.ac-d2          { transition-delay: 0.22s; }
+.ac-rv.ac-d3          { transition-delay: 0.36s; }
+
+/* ── Wrapper ────────────────────────────────────────── */
+.ac-doc {
+  overflow-x: hidden;
+}
+
+/* ── Full-bleed row (logo panel, book, TDP strip etc) ─ */
+.ac-full {
+  width: 100%;
+  background: var(--ac-lgrey); /* override per-section with style attr */
+}
+
+.ac-full img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* ── Logo panel ─────────────────────────────────────── */
+.ac-logo-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 40px 56px;
+  background: var(--ac-lgrey);
+}
+
+.ac-logo-panel .ac-logo-mark {
+  width: var(--ac-logo-w);
+  height: auto;
+  object-fit: contain;
+  animation: acLogoIn 0.85s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.ac-logo-panel .ac-logo-word {
+  height: var(--ac-word-h);
+  width: auto;
+  object-fit: contain;
+  margin-top: 16px;
+  animation: acFadeUp 0.8s 0.35s ease both;
+}
+
+.ac-logo-panel .ac-logo-byline {
+  margin-top: 8px;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ac-text);
+  animation: acFadeUp 0.8s 0.5s ease both;
+}
+
+@keyframes acLogoIn {
+  from { opacity: 0; transform: scale(0.55) rotate(-10deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes acFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Brief copy (below book image) ─────────────────── */
+.ac-brief-copy {
+  background: var(--ac-lgrey);
+  text-align: center;
+  padding: 32px 60px 48px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--ac-text);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* ── 2-column grid ──────────────────────────────────── */
+.ac-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ac-2col-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+  min-height: 380px;
+  background: var(--ac-lgrey); /* set per-cell via style attr */
+  overflow: hidden;
+}
+
+/* Flush cell — image fills the entire cell, no padding */
+.ac-2col-cell.ac-flush {
+  padding: 0;
+}
+
+/* ── 3-column grid ──────────────────────────────────── */
+.ac-3col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ac-3col-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  min-height: 280px;
+  background: var(--ac-lgrey); /* set per-cell via style attr */
+  overflow: hidden;
+}
+
+/* ── Image helpers ──────────────────────────────────── */
+/* Override width by setting style="--w:Xpx" on the img */
+.ac-img            { display: block; object-fit: contain; }
+.ac-img-phone      { width: var(--ac-phone-w);    max-width: 280px; mix-blend-mode: screen; }
+.ac-img-biga       { width: var(--ac-biga-w);     height: 100%; object-fit: cover; }
+.ac-img-monogram   { width: var(--ac-monogram-w); }
+.ac-img-cut        { width: var(--ac-cut-w);      margin-left: -8%; }
+.ac-img-scissors   { width: var(--ac-scissors-w); }
+.ac-img-darka      { width: var(--ac-darka-w);    object-fit: cover; align-self: flex-end; }
+.ac-img-portrait   { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.ac-img-full       { width: 100%; height: auto; display: block; }
+
+/* Dot grid */
+.ac-dot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, var(--ac-dot-size));
+  gap: calc(var(--ac-dot-size) * 0.5);
+}
+.ac-dot-grid img {
+  width: var(--ac-dot-size);
+  height: var(--ac-dot-size);
+  object-fit: contain;
+}
+
+/* Portrait with caption */
+.ac-portrait-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.ac-portrait-caption {
+  padding: 14px 20px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.45);
+  background: var(--ac-black);
+  flex-shrink: 0;
+}
+
+/* ── Type + palette spec row ────────────────────────── */
+.ac-spec {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  padding: 64px 60px;
+  background: var(--ac-white);
+}
+
+.ac-spec-type-head {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--ac-black);
+  margin-bottom: 10px;
+}
+
+.ac-spec-type-alpha {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--ac-black);
+}
+
+.ac-spec-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ac-spec-logo .ac-logo-mark { width: 120px; height: auto; object-fit: contain; }
+.ac-spec-logo .ac-logo-word { height: 13px; width: auto;  object-fit: contain; }
+
+.ac-spec-logo .ac-logo-byline {
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ac-text);
+}
+
+.ac-palette-head {
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--ac-black);
+  margin-bottom: 12px;
+  text-align: right;
+}
+
+.ac-swatches {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.ac-swatch {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+/* ── Collateral box ─────────────────────────────────── */
+.ac-collateral-wrap {
+  background: var(--ac-white);
+  padding: 0 60px 48px;
+}
+
+.ac-collateral-inner {
+  background: #ebebeb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ac-collateral-top {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 36px;
+}
+
+.ac-collateral-top .ac-logo-mark { width: var(--ac-coll-logo-w); height: auto; object-fit: contain; }
+.ac-collateral-top .ac-logo-word { height: 11px; width: auto; object-fit: contain; }
+
+.ac-collateral-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--ac-text);
+}
+
+/* ── Responsive breakpoints ─────────────────────────── */
+@media (max-width: 900px) {
+  .ac-2col          { grid-template-columns: 1fr; }
+  .ac-3col          { grid-template-columns: 1fr 1fr; }
+  .ac-spec          { grid-template-columns: 1fr; padding: 40px 24px; gap: 28px; }
+  .ac-palette-head,
+  .ac-swatches      { text-align: left; justify-content: flex-start; }
+  .ac-collateral-wrap { padding: 0 16px 32px; }
+  .ac-collateral-top  { grid-template-columns: auto 1fr; }
+  .ac-brief-copy    { padding: 24px; }
+  .ac-img-cut       { margin-left: -4%; }
+}
+
+@media (max-width: 560px) {
+  .ac-3col          { grid-template-columns: 1fr; }
+  .ac-2col-cell,
+  .ac-3col-cell     { min-height: 240px; }
+  .ac-logo-panel    { padding: 48px 24px 40px; }
+}
