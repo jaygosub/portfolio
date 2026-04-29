@@ -77,6 +77,24 @@
 }
 .col-text p+p{margin-top:14px}
 
+.two-col-yellow{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;align-items:center;justify-items:center;
+  background-color:#e0cc00 ;
+}
+
+.ac-image-col {
+  width:80%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.ac-image-col-3 {
+  width:40%;
+  height: auto;
+  margin: 0 auto;
+}
+
 /* ─── FULL BLEED IMAGE ────────────────────────────────── */
 .fullbleed{
   position:relative;width:100%;
@@ -96,6 +114,10 @@
   font-family:'Inter Tight',sans-serif;font-weight:500;
   font-size:10px;letter-spacing:.20em;text-transform:uppercase;
   color:rgba(255,255,255,.7);
+}
+.fullbleed-2 {
+ position:relative;width:100%;
+  height:10vh;min-height:180px;overflow:hidden;background-color: #dadada;
 }
 
 /* ─── VIDEO SECTIONS ──────────────────────────────────────
@@ -191,13 +213,13 @@
 .cta-strap{
   font-family:'Inter',sans-serif;font-weight:500;
   font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--fg-muted);margin-bottom:14px;
+  color:var(--fg-muted);margin-bottom:26px;
 }
 .cta-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(48px,10vw,96px);letter-spacing:.02em;
+  font-family:'Bebas Neue',sans-serif;font-weight: 200;
+  font-size:clamp(48px,10vw,66px);letter-spacing:.02em;
   text-transform:uppercase;color:var(--fg);
-  line-height:1;margin-bottom:36px;transition:color .35s;
+  line-height:1;margin-bottom:16px;transition:color .35s;
 }
 /* Shared button */
 /* ── FAB-style pill button ──────────────────────────────
@@ -325,6 +347,11 @@
 .three-col-image img{
   position:absolute;inset:0;
   width:100%;height:100%;object-fit:cover;
+}
+.three-col-image-mid{position:relative;min-height:280px;overflow:hidden;}
+.three-col-image-mid img{
+  position:absolute;inset:0;
+  width:50%;height:100%;object-fit:cover;align-items: center;justify-content: center;
 }
 
 /* ─── HORIZONTAL IMAGE SCROLLER ─────────────────────── */
