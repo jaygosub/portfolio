@@ -505,3 +505,50 @@
   .video-portrait-wrap{width:min(280px,75vw)}
   .video-portrait-section.centered .video-portrait-wrap{width:min(280px,75vw)}
 }
+/* ─── MOBILE ADDITIONS (≤700px) ──────────────────────── */
+@media (max-width: 700px) {
+
+  /* ── Three-col: stack vertically ── */
+  .three-col {
+    grid-template-columns: 1fr;
+  }
+  .three-col-image,
+  .three-col-image-mid {
+    min-height: 260px;
+  }
+
+  /* ── Project nav: compact on mobile ── */
+  .proj-foot-nav {
+    gap: 0.75rem;
+    padding: 2rem 1rem;
+  }
+  .proj-foot-btn {
+    padding: 10px 16px;
+  }
+  .proj-foot-label {
+    display: none;
+  }
+
+  /* ── Footer: stack + centre ── */
+  .footer-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .footer-copy {
+    justify-content: center;
+  }
+  .footer-para {
+    text-align: center;
+  }
+
+  /* ── General text: centre-align ── */
+  .hero-content,
+  .col-text,
+  .pull-quote,
+  .section,
+  .cta-section {
+    text-align: center;
+  }
+}
