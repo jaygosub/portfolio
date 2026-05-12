@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/global.css">
-<link rel="stylesheet" href="/css/showcase.css">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/showcase.css">
 </head>
 <body>
 
@@ -43,12 +43,12 @@
 ═════════════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-image">
-    <img src="freelance_image/Hopback.jpg" alt="Project hero">
+    <img src="personal_image/ablaut.jpg" alt="Project hero">
   </div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
-    <h1 class="hero-title">Kent <br>Hop Brewing</h1>
-    <p class="hero-cat">presentation design</p>
+    <h1 class="hero-title">Ablaut Deduplication</h1>
+    <p class="hero-cat">Wacky Word Play</p>
   </div>
 </section>
 
@@ -57,12 +57,12 @@
 ═════════════════════════════════════════════════════════ -->
 <section class="pull-quote">
   <blockquote>
-    "A pull quote goes here"
+    "A cultural phenomenon of sounds"
   </blockquote>
-  <cite>a byline goes here</cite>
+  <cite>strange vocabulary</cite>
 </section>
 
-<div class="section-divider"></div>
+
 
 <!-- ══════════════════════════════════════════════════════
      2-COL — IMAGE RIGHT
@@ -74,7 +74,7 @@
     <p>Some amazing inciteful text will go here.</p>
    </div> 
   <div class="col-image">
-    <img src="freelance_image/HopOil.jpg" alt="Vector artwork">
+    <img src="personal_image/ablaut.jpg" alt="Vector artwork">
   </div>
 </div>
 
@@ -84,7 +84,7 @@
      FULL BLEED IMAGE
 ═════════════════════════════════════════════════════════ -->
 <div class="fullbleed">
-  <img src="freelance_image/hop3.jpg" alt="Full bleed detail">
+  <img src="personal_image/ablaut.jpg" alt="Full bleed detail">
   <div class="fullbleed-caption">
     <span>Vector detail — Adobe Illustrator</span>
   </div>
@@ -95,7 +95,7 @@
 ═════════════════════════════════════════════════════════ -->
 <div class="two-col">
   <div class="col-image">
-    <img src="freelance_image/hop4.jpg" alt="3D render">
+    <img src="personal_image/ablaut.jpg" alt="3D render">
   </div>
   <div class="col-text">
     <p class="section-label"></p>
@@ -200,13 +200,23 @@
 
 
 <div class="proj-foot-nav">
-  <a href="academy.html" class="proj-foot-btn">
+  <a href="369.html" class="proj-foot-btn">
     <span class="proj-foot-arrow">←</span>
-    PREVIOUS PROJECT
+    <span class="proj-foot-label">PREVIOUS PROJECT</span>
   </a>
-  <a href="freelance.html" class="proj-foot-home">HOME</a>
-  <a href="career_pilot.html" class="proj-foot-btn">
-    NEXT PROJECT
+  <a href="personal.html" class="proj-foot-home">
+    <span class="proj-foot-home-text">HOME</span>
+    <span class="proj-foot-home-icon" aria-label="Home">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.8"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <path d="M9 21V12h6v9"/>
+      </svg>
+    </span>
+  </a>
+  <a href="langfords.html" class="proj-foot-btn">
+    <span class="proj-foot-label">NEXT PROJECT</span>
     <span class="proj-foot-arrow">→</span>
   </a>
 </div>
@@ -257,8 +267,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* Theme */
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
@@ -268,6 +277,7 @@ function setTheme(t){
   const s=localStorage.getItem('theme')||'dark';
   document.documentElement.setAttribute('data-theme',s);
 })();
+
 
 /* Menu */
 const hamburger   = document.querySelector('.hamburger');
@@ -281,6 +291,8 @@ function closeMenu(){
   hamburger.classList.remove('is-open');
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+
+/* Load More — project pages don't need this but keep stub */
 </script>
 </body>
 </html>
