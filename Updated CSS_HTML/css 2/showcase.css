@@ -537,7 +537,7 @@
   /* ── Footer: stack + centre ── */
   .footer-logos {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
   .footer-bottom {
     flex-direction: column;
