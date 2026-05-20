@@ -98,7 +98,7 @@
 /* ─── FULL BLEED IMAGE ────────────────────────────────── */
 .fullbleed{
   position:relative;width:100%;
-  height:70vh;min-height:380px;overflow:hidden;
+  height:80vh;min-height:380px;overflow:hidden;
 }
 .fullbleed img{
   position:absolute;inset:0;
